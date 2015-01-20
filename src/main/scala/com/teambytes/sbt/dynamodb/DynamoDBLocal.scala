@@ -48,8 +48,10 @@ object DynamoDBLocal extends AutoPlugin {
         val outputFile = new File(targetDir, s"dynamodb_local_$ver.tar.gz")
         if(!targetDir.exists()) targetDir.mkdirs()
         (new URL(url.getOrElse(DefaultDynamoDBLocalUrlTemplate(ver))) #> outputFile).!!
-        if(outputFile.exists()) { s"tar xvz $outputFile".!; outputFile }
-        else {
+        if(outputFile.exists()) {
+          Process(Seq("tar", "xvz", outputFile.getAbsolutePath), targetDir).!
+          outputFile
+        } else {
           streamz.log.error(s"Unable to find DyanmoDB Local jar at [${outputFile.getAbsolutePath}]")
           sys.exit(1)
         }
