@@ -49,7 +49,7 @@ object DynamoDBLocal extends AutoPlugin {
         if(!targetDir.exists()) targetDir.mkdirs()
         (new URL(url.getOrElse(DefaultDynamoDBLocalUrlTemplate(ver))) #> outputFile).!!
         if(outputFile.exists()) {
-          Process(Seq("tar", "xvz", outputFile.getAbsolutePath), targetDir).!
+          Process(Seq("tar", "xzf", outputFile.getAbsolutePath), targetDir).!
           outputFile
         } else {
           streamz.log.error(s"Unable to find DyanmoDB Local jar at [${outputFile.getAbsolutePath}]")
