@@ -20,7 +20,7 @@ object DynamoDBLocal extends AutoPlugin {
   object Keys {
     val dynamoDBLocalVersion = settingKey[String]("DynamoDB Local version to download.")
     val dynamoDBLocalDownloadUrl = settingKey[Option[String]]("DynamoDB Local URL to download jar from (optional).")
-    val dynamoDBLocalDownloadDirectory = settingKey[String]("The directory DynamoDB Local jar will be downloaded to.")
+    val dynamoDBLocalDownloadDirectory = settingKey[File]("The directory DynamoDB Local jar will be downloaded to.")
     val dynamoDBLocalPort = settingKey[Option[Int]]("The port number that DynamoDB Local will use to communicate with your application. If you do not specify this option, the default port is 8000.")
     val dynamoDBLocalDBPath = settingKey[Option[String]]("The directory where DynamoDB Local will write its database file. If you do not specify this option, the file will be written to the current directory.")
     val dynamoDBLocalInMemory = settingKey[Boolean]("Instead of using a database file, DynamoDB Local will run in memory. When you stop DynamoDB Local, none of the data will be saved.")
@@ -46,6 +46,7 @@ object DynamoDBLocal extends AutoPlugin {
       case (ver, url, targetDir, streamz) =>
         import sys.process._
         val outputFile = new File(targetDir, s"dynamodb_local_$ver.tar.gz")
+        if(!targetDir.exists()) targetDir.mkdirs()
         (new URL(url.getOrElse(DefaultDynamoDBLocalUrlTemplate(ver))) #> outputFile).!!
         if(outputFile.exists()) { outputFile }
         else {
@@ -55,8 +56,7 @@ object DynamoDBLocal extends AutoPlugin {
     },
     startDynamoDBLocal <<= (deployDynamoDBLocal, dynamoDBLocalDownloadDirectory, dynamoDBLocalPort, dynamoDBLocalDBPath, dynamoDBLocalInMemory, streams) map {
       case (dyanmoHome, baseDir, port, dbPath, inMem, streamz) =>
-        val baseDirFile = new File(baseDir)
-        val args = Seq("java", s"-Djava.library.path=${new File(baseDirFile, DynamoDBLocalLibDir).getAbsolutePath}", "-jar", new File(baseDirFile, DynamoDBLocalJar).getAbsolutePath) ++
+        val args = Seq("java", s"-Djava.library.path=${new File(baseDir, DynamoDBLocalLibDir).getAbsolutePath}", "-jar", new File(baseDir, DynamoDBLocalJar).getAbsolutePath) ++
           port.map(p => Seq("-port", p.toString)).getOrElse(Nil) ++
           dbPath.map(db => Seq("-dbPath", db)).getOrElse(Nil) ++
           (if(inMem) Seq("-inMemory") else Nil)
