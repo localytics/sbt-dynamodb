@@ -3,7 +3,7 @@ import com.typesafe.sbt.SbtGit._
 
 name := "sbt-dynamodb"
 
-organization := "com.teambytes"
+organization := "com.teambytes.sbt"
 
 sbtPlugin := true
 
@@ -19,9 +19,13 @@ publishMavenStyle := false
 
 bintrayPublishSettings
 
-repository in bintry := "sbt-plugins"
+repository in bintray := "sbt-plugins"
 
-bintryOrganization in bintry := None
+bintrayOrganization in bintray := None
 
 licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
 
+libraryDependencies ++= Seq(
+  "org.scalatest" %% "scalatest" % "2.2.0" % "test",
+  "org.mockito" % "mockito-all" % "1.9.5" % "test"
+)
