@@ -1,4 +1,4 @@
-sbt-dynamodb-plugin
+sbt-dynamodb
 ===============
 
 Support for running [DynamoDB Local](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Tools.html) for use in integration tests.
