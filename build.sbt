@@ -1,5 +1,6 @@
 import bintray.Keys._
 import com.typesafe.sbt.SbtGit._
+import sbtrelease.ReleasePlugin._
 
 name := "sbt-dynamodb"
 
@@ -13,7 +14,7 @@ scalacOptions ++= List(
 
 versionWithGit
 
-git.baseVersion := "0.1"
+releaseSettings
 
 publishMavenStyle := false
 
