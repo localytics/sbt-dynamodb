@@ -28,7 +28,7 @@ object DynamoDBLocal extends AutoPlugin {
     val startDynamoDBLocal = TaskKey[String]("start-dynamodb-local")
     val dynamoDBLocalPid = TaskKey[String]("dynamodb-local-pid")
     val stopDynamoDBLocalAfterTests = SettingKey[Boolean]("stop-dynamodb-local-after-tests")
-    val cleanDynamoDBLocalAfterStop = SettingKey[Boolean]("stop-dynamodb-local-after-tests")
+    val cleanDynamoDBLocalAfterStop = SettingKey[Boolean]("clean-dynamodb-local-after-tests")
     val stopDynamoDBLocal = TaskKey[Unit]("stop-dynamodb-local")
   }
 
