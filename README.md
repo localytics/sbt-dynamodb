@@ -10,7 +10,7 @@ Installation
 Add the following to your `project/plugins.sbt` file:
 
 ```
-addSbtPlugin("com.teambytes.sbt" % "sbt-dynamodb" % "1.0")
+addSbtPlugin("com.teambytes.sbt" % "sbt-dynamodb" % "1.1")
 ```
 
 Configuration
