@@ -46,9 +46,17 @@ object DynamoDBLocal extends AutoPlugin {
       case (ver, url, targetDir, streamz) =>
         import sys.process._
         val outputFile = new File(targetDir, s"dynamodb_local_$ver.tar.gz")
-        if(!targetDir.exists()) targetDir.mkdirs()
-        (new URL(url.getOrElse(DefaultDynamoDBLocalUrlTemplate(ver))) #> outputFile).!!
+        if(!targetDir.exists()){
+          streamz.log.info(s"Creating DynamoDB Local directory $targetDir:")
+          targetDir.mkdirs()
+        }
+        if(!outputFile.exists() || ver == "latest") {
+          val remoteFile= url.getOrElse(DefaultDynamoDBLocalUrlTemplate(ver))
+          streamz.log.info(s"Downloading DynamoDB Local from [$remoteFile] to [${outputFile.getAbsolutePath}]")
+          (new URL(remoteFile) #> outputFile).!!
+        }
         if(outputFile.exists()) {
+          streamz.log.info(s"Extracting file: [${outputFile.getAbsolutePath}]")
           Process(Seq("tar", "xzf", outputFile.getAbsolutePath), targetDir).!
           outputFile
         } else {
@@ -64,6 +72,7 @@ object DynamoDBLocal extends AutoPlugin {
           (if(inMem) Seq("-inMemory") else Nil)
 
         if(!Utils.isDynamoDBLocalRunning(port.getOrElse(DefaultPort))) {
+          streamz.log.info("Starting dyanmodb local:")
           Process(args).run()
           streamz.log.info("Waiting for dyanmodb local:")
           Utils.waitForDynamoDBLocal(port.getOrElse(DefaultPort), (s: String) => streamz.log.info(s))
@@ -103,7 +112,15 @@ object DynamoDBLocal extends AutoPlugin {
   )
 
   private[this] def killDynamoDBLocal(clean: Boolean, dataDir: Option[String], pid: String) = {
-    s"kill $pid".!
+    val osName= System.getProperty("os.name") match {
+      case n: String if !n.isEmpty => n
+      case _ => System.getProperty("os")
+    }
+    if(osName.toLowerCase.contains("windows")) {
+      s"Taskkill /PID $pid /F".!
+    } else {
+      s"kill $pid".!
+    }
     Utils.cleanDynamoDBLocal(clean, dataDir, pid)
   }
 
