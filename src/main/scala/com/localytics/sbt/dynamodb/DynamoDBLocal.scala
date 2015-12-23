@@ -95,8 +95,9 @@ object DynamoDBLocal extends AutoPlugin {
           dynamoDBLocalPid := pid
           pid
         }.getOrElse {
-          streamz.log.error(s"Cannot find dynamodb local PID")
-          sys.exit(1)
+          // This is ok - it just means that DynamoDB isn't running, most likely because it was never started. :-)
+          streamz.log.info(s"Cannot find dynamodb local PID")
+          "0"
         }
     },
     stopDynamoDBLocal <<= (dynamoDBLocalPid, dynamoDBLocalDBPath, cleanDynamoDBLocalAfterStop) map {
@@ -106,7 +107,7 @@ object DynamoDBLocal extends AutoPlugin {
     //make sure to Stop DynamoDB Local when tests are done.
     testOptions in Test <+= (dynamoDBLocalPid, stopDynamoDBLocalAfterTests, cleanDynamoDBLocalAfterStop, dynamoDBLocalDBPath) map {
       case (pid, stop, cln, dbPath) => Tests.Cleanup(() => {
-        if(stop) killDynamoDBLocal(cln, dbPath, pid)
+        if(stop && pid != "0") killDynamoDBLocal(cln, dbPath, pid)
       })
     }
   )
