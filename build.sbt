@@ -1,4 +1,3 @@
-import bintray.Keys._
 import com.typesafe.sbt.SbtGit._
 
 name := "sbt-dynamodb"
@@ -20,12 +19,6 @@ scalacOptions ++= Seq(
 versionWithGit
 
 publishMavenStyle := false
-
-bintrayPublishSettings
-
-repository in bintray := "sbt-plugins"
-
-bintrayOrganization in bintray := None
 
 licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
 
