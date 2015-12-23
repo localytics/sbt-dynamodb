@@ -1,10 +1,11 @@
 package com.localytics.sbt.dynamodb
 
-import sbt._
-import sbt.Keys._
-
-import java.net.URL
 import java.io.File
+import java.net.URL
+
+import sbt.Keys._
+import sbt._
+
 import scala.concurrent.duration._
 
 object DynamoDBLocal extends AutoPlugin {
@@ -52,16 +53,16 @@ object DynamoDBLocal extends AutoPlugin {
       case (ver, url, targetDir, downloadIfOlderThan, streamz) =>
         import sys.process._
         val outputFile = new File(targetDir, s"dynamodb_local_$ver.tar.gz")
-        if(!targetDir.exists()){
+        if (!targetDir.exists()) {
           streamz.log.info(s"Creating DynamoDB Local directory $targetDir:")
           targetDir.mkdirs()
         }
-        if(!outputFile.exists() || ((ver == "latest") && (System.currentTimeMillis - outputFile.lastModified() > downloadIfOlderThan.toMillis))) {
-          val remoteFile= url.getOrElse(DefaultDynamoDBLocalUrlTemplate(ver))
+        if (!outputFile.exists() || ((ver == "latest") && (System.currentTimeMillis - outputFile.lastModified() > downloadIfOlderThan.toMillis))) {
+          val remoteFile = url.getOrElse(DefaultDynamoDBLocalUrlTemplate(ver))
           streamz.log.info(s"Downloading DynamoDB Local from [$remoteFile] to [${outputFile.getAbsolutePath}]")
           (new URL(remoteFile) #> outputFile).!!
         }
-        if(outputFile.exists()) {
+        if (outputFile.exists()) {
           streamz.log.info(s"Extracting file: [${outputFile.getAbsolutePath}]")
           Process(Seq("tar", "xzf", outputFile.getAbsolutePath), targetDir).!
           outputFile
@@ -75,10 +76,10 @@ object DynamoDBLocal extends AutoPlugin {
         val args = Seq("java", s"-Djava.library.path=${new File(baseDir, DynamoDBLocalLibDir).getAbsolutePath}", "-jar", new File(baseDir, DynamoDBLocalJar).getAbsolutePath) ++
           port.map(p => Seq("-port", p.toString)).getOrElse(Nil) ++
           dbPath.map(db => Seq("-dbPath", db)).getOrElse(Nil) ++
-          (if(inMem) Seq("-inMemory") else Nil) ++
+          (if (inMem) Seq("-inMemory") else Nil) ++
           (if (shared) Seq("-sharedDb") else Nil)
 
-        if(!Utils.isDynamoDBLocalRunning(port.getOrElse(DefaultPort))) {
+        if (!Utils.isDynamoDBLocalRunning(port.getOrElse(DefaultPort))) {
           streamz.log.info("Starting dyanmodb local:")
           Process(args).run()
           streamz.log.info("Waiting for dyanmodb local:")
@@ -114,17 +115,17 @@ object DynamoDBLocal extends AutoPlugin {
     //make sure to Stop DynamoDB Local when tests are done.
     testOptions in Test <+= (dynamoDBLocalPid, stopDynamoDBLocalAfterTests, cleanDynamoDBLocalAfterStop, dynamoDBLocalDBPath) map {
       case (pid, stop, cln, dbPath) => Tests.Cleanup(() => {
-        if(stop && pid != "0") killDynamoDBLocal(cln, dbPath, pid)
+        if (stop && pid != "0") killDynamoDBLocal(cln, dbPath, pid)
       })
     }
   )
 
   private[this] def killDynamoDBLocal(clean: Boolean, dataDir: Option[String], pid: String) = {
-    val osName= System.getProperty("os.name") match {
+    val osName = System.getProperty("os.name") match {
       case n: String if !n.isEmpty => n
       case _ => System.getProperty("os")
     }
-    if(osName.toLowerCase.contains("windows")) {
+    if (osName.toLowerCase.contains("windows")) {
       s"Taskkill /PID $pid /F".!
     } else {
       s"kill $pid".!

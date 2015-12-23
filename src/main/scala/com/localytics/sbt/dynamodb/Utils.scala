@@ -11,7 +11,7 @@ private[dynamodb] object Utils {
   def extractDyanmoDBPid(input: String): Option[String] = ProcessIDRegex.findFirstIn(input).map(_.split(" ")(0))
 
   def cleanDynamoDBLocal(clean: Boolean, dataDir: Option[String], pid: String) = {
-    if(clean && dataDir.exists(d => new File(d).exists())) sbt.IO.delete(new File(dataDir.get))
+    if (clean && dataDir.exists(d => new File(d).exists())) sbt.IO.delete(new File(dataDir.get))
   }
 
   def isDynamoDBLocalRunning(port: Int): Boolean = {

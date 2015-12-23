@@ -1,12 +1,12 @@
 package com.localytics.sbt.dynamodb
 
-import org.scalatest.{MustMatchers, WordSpec}
+import org.scalatest.{FunSpec, Matchers}
 
-class UtilsTest extends WordSpec with MustMatchers {
+class UtilsTest extends FunSpec with Matchers {
 
-  "Utils" should {
+  describe("Utils") {
 
-    "extract PID correctly" in {
+    it("should extract PID correctly") {
       val jpsOutput =
         """
           |16706 QuorumPeerMain
@@ -16,7 +16,7 @@ class UtilsTest extends WordSpec with MustMatchers {
           |51449
         """.stripMargin
 
-      Utils.extractDyanmoDBPid(jpsOutput) must equal(Some("59022"))
+      Utils.extractDyanmoDBPid(jpsOutput) should equal(Some("59022"))
     }
 
   }
