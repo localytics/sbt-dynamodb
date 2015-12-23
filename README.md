@@ -49,6 +49,12 @@ dynamoDBLocalInMemory := false
 dynamoDBLocalDBPath := Some("some/directory/here")
 ```
 
+The default for DynamoDB Local instance is to use a separate file for each credential and region. To allow all all DynamoDB clients to interact with the same set of tables regardless of their region and credentials enable "shared db" mode.
+
+```
+dynamoDBLocalSharedDB := true
+```
+
 The default regarding tests is to both stop & cleanup any data directory if specified. This can be changed using the below settings.
 
 ```

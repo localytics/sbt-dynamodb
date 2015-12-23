@@ -24,6 +24,7 @@ object DynamoDBLocal extends AutoPlugin {
     val dynamoDBLocalPort = settingKey[Option[Int]]("The port number that DynamoDB Local will use to communicate with your application. If you do not specify this option, the default port is 8000.")
     val dynamoDBLocalDBPath = settingKey[Option[String]]("The directory where DynamoDB Local will write its database file. If you do not specify this option, the file will be written to the current directory.")
     val dynamoDBLocalInMemory = settingKey[Boolean]("Instead of using a database file, DynamoDB Local will run in memory. When you stop DynamoDB Local, none of the data will be saved.")
+    val dynamoDBLocalSharedDB = settingKey[Boolean]("DynamoDB Local creates a single database file named shared-local-instance.db. Every program that connects to DynamoDB Local will access this file. If you delete the file, you will lose any data you have stored in it")
     val deployDynamoDBLocal = TaskKey[File]("deploy-dynamodb-local")
     val startDynamoDBLocal = TaskKey[String]("start-dynamodb-local")
     val dynamoDBLocalPid = TaskKey[String]("dynamodb-local-pid")
@@ -40,6 +41,7 @@ object DynamoDBLocal extends AutoPlugin {
     dynamoDBLocalPort := Some(DefaultPort),
     dynamoDBLocalDBPath := None,
     dynamoDBLocalInMemory := true,
+    dynamoDBLocalSharedDB := false,
     stopDynamoDBLocalAfterTests := true,
     cleanDynamoDBLocalAfterStop := true,
     deployDynamoDBLocal <<= (dynamoDBLocalVersion, dynamoDBLocalDownloadUrl, dynamoDBLocalDownloadDirectory, streams) map {
@@ -64,12 +66,13 @@ object DynamoDBLocal extends AutoPlugin {
           sys.exit(1)
         }
     },
-    startDynamoDBLocal <<= (deployDynamoDBLocal, dynamoDBLocalDownloadDirectory, dynamoDBLocalPort, dynamoDBLocalDBPath, dynamoDBLocalInMemory, streams) map {
-      case (dyanmoHome, baseDir, port, dbPath, inMem, streamz) =>
+    startDynamoDBLocal <<= (deployDynamoDBLocal, dynamoDBLocalDownloadDirectory, dynamoDBLocalPort, dynamoDBLocalDBPath, dynamoDBLocalInMemory, dynamoDBLocalSharedDB, streams) map {
+      case (dyanmoHome, baseDir, port, dbPath, inMem, shared, streamz) =>
         val args = Seq("java", s"-Djava.library.path=${new File(baseDir, DynamoDBLocalLibDir).getAbsolutePath}", "-jar", new File(baseDir, DynamoDBLocalJar).getAbsolutePath) ++
           port.map(p => Seq("-port", p.toString)).getOrElse(Nil) ++
           dbPath.map(db => Seq("-dbPath", db)).getOrElse(Nil) ++
-          (if(inMem) Seq("-inMemory") else Nil)
+          (if(inMem) Seq("-inMemory") else Nil) ++
+          (if (shared) Seq("-sharedDb") else Nil)
 
         if(!Utils.isDynamoDBLocalRunning(port.getOrElse(DefaultPort))) {
           streamz.log.info("Starting dyanmodb local:")
