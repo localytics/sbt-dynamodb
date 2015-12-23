@@ -35,6 +35,13 @@ To use a specific version ("latest" is the default DynamoDB version to download 
 dynamoDBLocalVersion := "2014-10-07"
 ```
 
+If the "latest" version is being used, specify how old the downloaded copy should be before attempting a new download (default is 2 days)
+
+```
+import scala.concurrent.duration._
+dynamoDBLocalDownloadIfOlderThan := 2.days
+```
+
 To specify a port other than the default `8000`
 
 ```
