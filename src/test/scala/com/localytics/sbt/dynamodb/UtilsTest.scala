@@ -1,9 +1,8 @@
 package com.localytics.sbt.dynamodb
 
-import org.scalatest.mock.MockitoSugar
 import org.scalatest.{MustMatchers, WordSpec}
 
-class UtilsTest extends WordSpec with MustMatchers with MockitoSugar {
+class UtilsTest extends WordSpec with MustMatchers {
 
   "Utils" should {
 
