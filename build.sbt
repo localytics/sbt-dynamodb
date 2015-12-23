@@ -1,5 +1,3 @@
-import com.typesafe.sbt.SbtGit._
-
 name := "sbt-dynamodb"
 
 organization := "com.localytics"
@@ -16,10 +14,21 @@ scalacOptions ++= Seq(
   "-Yno-adapted-args"     // Do not adapt an argument list (by inserting () or creating a tuple) to match the receiver
 )
 
-versionWithGit
+// This is an auto plugin
+// http://www.scala-sbt.org/0.13/docs/Plugins.html#Creating+an+auto+plugin
+sbtPlugin := true
 
+// Generate a POM
+// http://www.scala-sbt.org/0.13/docs/Publishing.html#Modifying+the+generated+POM
 publishMavenStyle := false
 
+// Enable GitVersioning
+// https://github.com/sbt/sbt-git#versioning-with-git
+lazy val dynamodb = (project in file(".")).
+  enablePlugins(GitVersioning)
+
+// MIT License for bintray
+// https://github.com/softprops/bintray-sbt#licenses
 licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
 
 // Error on conflicting dependencies
