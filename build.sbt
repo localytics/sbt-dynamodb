@@ -4,7 +4,7 @@ import sbtrelease.ReleasePlugin._
 
 name := "sbt-dynamodb"
 
-organization := "com.teambytes.sbt"
+organization := "com.localytics"
 
 sbtPlugin := true
 

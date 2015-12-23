@@ -1,4 +1,4 @@
-package com.teambytes.sbt.dynamodb
+package com.localytics.sbt.dynamodb
 
 import java.io.File
 

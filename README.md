@@ -5,17 +5,19 @@ Support for running [DynamoDB Local](http://docs.aws.amazon.com/amazondynamodb/l
 
 Based on the [Maven Plugin for DynamoDB](https://github.com/jcabi/jcabi-dynamodb-maven-plugin).
 
+Initial [implementation](https://github.com/grahamar/sbt-dynamodb) by [Graham Rhodes](https://github.com/grahamar).  
+
 Installation
 ------------
 Add the following to your `project/plugins.sbt` file:
 
 ```
-addSbtPlugin("com.teambytes.sbt" % "sbt-dynamodb" % "1.1")
+addSbtPlugin("com.localytics" % "sbt-dynamodb" % "1.2")
 ```
 
 Configuration
 -------------
-The following represents the minimum amount of code required in a `build.sbt` to use [sbt-dynamodb](https://github.com/grahamar/sbt-dynamodb)
+The following represents the minimum amount of code required in a `build.sbt` to use sbt-dynamodb.
 
 To use the dynamodb settings in your project, add `DynamoDBLocal.settings` to your build, set the directory to use for the DynamoDB Local jar and have your tests depend on starting the DynamoDB Local instance.
 

@@ -1,4 +1,4 @@
-package com.teambytes.sbt.dynamodb
+package com.localytics.sbt.dynamodb
 
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{MustMatchers, WordSpec}
