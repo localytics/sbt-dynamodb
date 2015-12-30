@@ -1,10 +1,12 @@
-package com.teambytes.sbt.dynamodb
+package com.localytics.sbt.dynamodb
 
-import sbt._
-import sbt.Keys._
-
-import java.net.URL
 import java.io.File
+import java.net.URL
+
+import sbt.Keys._
+import sbt._
+
+import scala.concurrent.duration._
 
 object DynamoDBLocal extends AutoPlugin {
 
@@ -16,14 +18,17 @@ object DynamoDBLocal extends AutoPlugin {
   private val DynamoDBLocalLibDir = "DynamoDBLocal_lib"
   private val DynamoDBLocalJar = "DynamoDBLocal.jar"
   private val DefaultPort = 8000
+  private val DefaultDynamoDBLocalDownloadIfOlderThan = 2.days
 
   object Keys {
     val dynamoDBLocalVersion = settingKey[String]("DynamoDB Local version to download.")
     val dynamoDBLocalDownloadUrl = settingKey[Option[String]]("DynamoDB Local URL to download jar from (optional).")
     val dynamoDBLocalDownloadDirectory = settingKey[File]("The directory DynamoDB Local jar will be downloaded to.")
+    val dynamoDBLocalDownloadIfOlderThan = settingKey[Duration]("Re-download the jar if the existing one is older than this.")
     val dynamoDBLocalPort = settingKey[Option[Int]]("The port number that DynamoDB Local will use to communicate with your application. If you do not specify this option, the default port is 8000.")
     val dynamoDBLocalDBPath = settingKey[Option[String]]("The directory where DynamoDB Local will write its database file. If you do not specify this option, the file will be written to the current directory.")
     val dynamoDBLocalInMemory = settingKey[Boolean]("Instead of using a database file, DynamoDB Local will run in memory. When you stop DynamoDB Local, none of the data will be saved.")
+    val dynamoDBLocalSharedDB = settingKey[Boolean]("DynamoDB Local creates a single database file named shared-local-instance.db. Every program that connects to DynamoDB Local will access this file. If you delete the file, you will lose any data you have stored in it")
     val deployDynamoDBLocal = TaskKey[File]("deploy-dynamodb-local")
     val startDynamoDBLocal = TaskKey[String]("start-dynamodb-local")
     val dynamoDBLocalPid = TaskKey[String]("dynamodb-local-pid")
@@ -37,25 +42,27 @@ object DynamoDBLocal extends AutoPlugin {
   def settings: Seq[Setting[_]] = Seq(
     dynamoDBLocalVersion := DefaultDynamoDBLocalVersion,
     dynamoDBLocalDownloadUrl := None,
+    dynamoDBLocalDownloadIfOlderThan := DefaultDynamoDBLocalDownloadIfOlderThan,
     dynamoDBLocalPort := Some(DefaultPort),
     dynamoDBLocalDBPath := None,
     dynamoDBLocalInMemory := true,
+    dynamoDBLocalSharedDB := false,
     stopDynamoDBLocalAfterTests := true,
     cleanDynamoDBLocalAfterStop := true,
-    deployDynamoDBLocal <<= (dynamoDBLocalVersion, dynamoDBLocalDownloadUrl, dynamoDBLocalDownloadDirectory, streams) map {
-      case (ver, url, targetDir, streamz) =>
+    deployDynamoDBLocal <<= (dynamoDBLocalVersion, dynamoDBLocalDownloadUrl, dynamoDBLocalDownloadDirectory, dynamoDBLocalDownloadIfOlderThan, streams) map {
+      case (ver, url, targetDir, downloadIfOlderThan, streamz) =>
         import sys.process._
         val outputFile = new File(targetDir, s"dynamodb_local_$ver.tar.gz")
-        if(!targetDir.exists()){
+        if (!targetDir.exists()) {
           streamz.log.info(s"Creating DynamoDB Local directory $targetDir:")
           targetDir.mkdirs()
         }
-        if(!outputFile.exists() || ver == "latest") {
-          val remoteFile= url.getOrElse(DefaultDynamoDBLocalUrlTemplate(ver))
+        if (!outputFile.exists() || ((ver == "latest") && (System.currentTimeMillis - outputFile.lastModified() > downloadIfOlderThan.toMillis))) {
+          val remoteFile = url.getOrElse(DefaultDynamoDBLocalUrlTemplate(ver))
           streamz.log.info(s"Downloading DynamoDB Local from [$remoteFile] to [${outputFile.getAbsolutePath}]")
           (new URL(remoteFile) #> outputFile).!!
         }
-        if(outputFile.exists()) {
+        if (outputFile.exists()) {
           streamz.log.info(s"Extracting file: [${outputFile.getAbsolutePath}]")
           Process(Seq("tar", "xzf", outputFile.getAbsolutePath), targetDir).!
           outputFile
@@ -64,14 +71,15 @@ object DynamoDBLocal extends AutoPlugin {
           sys.exit(1)
         }
     },
-    startDynamoDBLocal <<= (deployDynamoDBLocal, dynamoDBLocalDownloadDirectory, dynamoDBLocalPort, dynamoDBLocalDBPath, dynamoDBLocalInMemory, streams) map {
-      case (dyanmoHome, baseDir, port, dbPath, inMem, streamz) =>
+    startDynamoDBLocal <<= (deployDynamoDBLocal, dynamoDBLocalDownloadDirectory, dynamoDBLocalPort, dynamoDBLocalDBPath, dynamoDBLocalInMemory, dynamoDBLocalSharedDB, streams) map {
+      case (dyanmoHome, baseDir, port, dbPath, inMem, shared, streamz) =>
         val args = Seq("java", s"-Djava.library.path=${new File(baseDir, DynamoDBLocalLibDir).getAbsolutePath}", "-jar", new File(baseDir, DynamoDBLocalJar).getAbsolutePath) ++
           port.map(p => Seq("-port", p.toString)).getOrElse(Nil) ++
           dbPath.map(db => Seq("-dbPath", db)).getOrElse(Nil) ++
-          (if(inMem) Seq("-inMemory") else Nil)
+          (if (inMem) Seq("-inMemory") else Nil) ++
+          (if (shared) Seq("-sharedDb") else Nil)
 
-        if(!Utils.isDynamoDBLocalRunning(port.getOrElse(DefaultPort))) {
+        if (!Utils.isDynamoDBLocalRunning(port.getOrElse(DefaultPort))) {
           streamz.log.info("Starting dyanmodb local:")
           Process(args).run()
           streamz.log.info("Waiting for dyanmodb local:")
@@ -95,8 +103,9 @@ object DynamoDBLocal extends AutoPlugin {
           dynamoDBLocalPid := pid
           pid
         }.getOrElse {
-          streamz.log.error(s"Cannot find dynamodb local PID")
-          sys.exit(1)
+          // This is ok - it just means that DynamoDB isn't running, most likely because it was never started. :-)
+          streamz.log.info(s"Cannot find dynamodb local PID")
+          "0"
         }
     },
     stopDynamoDBLocal <<= (dynamoDBLocalPid, dynamoDBLocalDBPath, cleanDynamoDBLocalAfterStop) map {
@@ -106,17 +115,17 @@ object DynamoDBLocal extends AutoPlugin {
     //make sure to Stop DynamoDB Local when tests are done.
     testOptions in Test <+= (dynamoDBLocalPid, stopDynamoDBLocalAfterTests, cleanDynamoDBLocalAfterStop, dynamoDBLocalDBPath) map {
       case (pid, stop, cln, dbPath) => Tests.Cleanup(() => {
-        if(stop) killDynamoDBLocal(cln, dbPath, pid)
+        if (stop && pid != "0") killDynamoDBLocal(cln, dbPath, pid)
       })
     }
   )
 
   private[this] def killDynamoDBLocal(clean: Boolean, dataDir: Option[String], pid: String) = {
-    val osName= System.getProperty("os.name") match {
+    val osName = System.getProperty("os.name") match {
       case n: String if !n.isEmpty => n
       case _ => System.getProperty("os")
     }
-    if(osName.toLowerCase.contains("windows")) {
+    if (osName.toLowerCase.contains("windows")) {
       s"Taskkill /PID $pid /F".!
     } else {
       s"kill $pid".!

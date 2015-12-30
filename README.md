@@ -5,17 +5,19 @@ Support for running [DynamoDB Local](http://docs.aws.amazon.com/amazondynamodb/l
 
 Based on the [Maven Plugin for DynamoDB](https://github.com/jcabi/jcabi-dynamodb-maven-plugin).
 
+Initial [implementation](https://github.com/grahamar/sbt-dynamodb) by [Graham Rhodes](https://github.com/grahamar).  
+
 Installation
 ------------
 Add the following to your `project/plugins.sbt` file:
 
 ```
-addSbtPlugin("com.teambytes.sbt" % "sbt-dynamodb" % "1.1")
+addSbtPlugin("com.localytics" % "sbt-dynamodb" % "1.2")
 ```
 
 Configuration
 -------------
-The following represents the minimum amount of code required in a `build.sbt` to use [sbt-dynamodb](https://github.com/grahamar/sbt-dynamodb)
+The following represents the minimum amount of code required in a `build.sbt` to use sbt-dynamodb.
 
 To use the dynamodb settings in your project, add `DynamoDBLocal.settings` to your build, set the directory to use for the DynamoDB Local jar and have your tests depend on starting the DynamoDB Local instance.
 
@@ -33,6 +35,13 @@ To use a specific version ("latest" is the default DynamoDB version to download 
 dynamoDBLocalVersion := "2014-10-07"
 ```
 
+If the "latest" version is being used, specify how old the downloaded copy should be before attempting a new download (default is 2 days)
+
+```
+import scala.concurrent.duration._
+dynamoDBLocalDownloadIfOlderThan := 2.days
+```
+
 To specify a port other than the default `8000`
 
 ```
@@ -45,6 +54,12 @@ The default for the DynamoDB Local instance is to run in "in-memory" mode. To us
 dynamoDBLocalInMemory := false
 
 dynamoDBLocalDBPath := Some("some/directory/here")
+```
+
+The default for DynamoDB Local instance is to use a separate file for each credential and region. To allow all all DynamoDB clients to interact with the same set of tables regardless of their region and credentials enable "shared db" mode.
+
+```
+dynamoDBLocalSharedDB := true
 ```
 
 The default regarding tests is to both stop & cleanup any data directory if specified. This can be changed using the below settings.
