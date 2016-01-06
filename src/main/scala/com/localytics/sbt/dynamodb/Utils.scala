@@ -1,7 +1,5 @@
 package com.localytics.sbt.dynamodb
 
-import java.io.File
-
 import scala.util.Try
 
 private[dynamodb] object Utils {
@@ -9,10 +7,6 @@ private[dynamodb] object Utils {
   private val ProcessIDRegex = """\d+ DynamoDBLocal\.jar""".r
 
   def extractDynamoDBPid(input: String): Option[String] = ProcessIDRegex.findFirstIn(input).map(_.split(" ")(0))
-
-  def cleanDynamoDBLocal(clean: Boolean, dataDir: Option[String], pid: String) = {
-    if (clean && dataDir.exists(d => new File(d).exists())) sbt.IO.delete(new File(dataDir.get))
-  }
 
   def isDynamoDBLocalRunning(port: Int): Boolean = {
     Try {
@@ -34,6 +28,18 @@ private[dynamodb] object Utils {
           Thread.sleep(500)
           continue = false
       }
+    }
+  }
+
+  def killPidCommand(pid: String): String = {
+    val osName = System.getProperty("os.name") match {
+      case n: String if !n.isEmpty => n
+      case _ => System.getProperty("os")
+    }
+    if (osName.toLowerCase.contains("windows")) {
+      s"Taskkill /PID $pid /F"
+    } else {
+      s"kill $pid"
     }
   }
 

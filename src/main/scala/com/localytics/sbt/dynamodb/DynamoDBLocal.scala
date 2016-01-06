@@ -36,10 +36,8 @@ object DynamoDBLocal extends AutoPlugin {
     val dynamoDBLocalDBPath = settingKey[Option[String]]("The directory where DynamoDB Local will write its database file. Defaults to the current directory.")
     val dynamoDBLocalInMemory = settingKey[Boolean]("Instead of using a database file, DynamoDB Local will run in memory. When you stop DynamoDB Local, none of the data will be saved.")
     val dynamoDBLocalSharedDB = settingKey[Boolean]("DynamoDB Local will use a single, shared database file. All clients will interact with the same set of tables regardless of their region and credential configuration.")
-    val stopDynamoDBLocalAfterTests = SettingKey[Boolean]("stop-dynamodb-local-after-tests")
-    val cleanDynamoDBLocalAfterStop = SettingKey[Boolean]("clean-dynamodb-local-after-tests")
+    val cleanDynamoDBLocalAfterStop = SettingKey[Boolean]("clean-dynamodb-local-after-stop")
 
-    val dynamoDBLocalPid = TaskKey[String]("dynamodb-local-pid")
     val deployDynamoDBLocal = TaskKey[File]("deploy-dynamodb-local")
     val startDynamoDBLocal = TaskKey[String]("start-dynamodb-local")
     val stopDynamoDBLocal = TaskKey[Unit]("stop-dynamodb-local")
@@ -57,7 +55,6 @@ object DynamoDBLocal extends AutoPlugin {
     dynamoDBLocalDBPath := None,
     dynamoDBLocalInMemory := true,
     dynamoDBLocalSharedDB := false,
-    stopDynamoDBLocalAfterTests := true,
     cleanDynamoDBLocalAfterStop := true,
     deployDynamoDBLocal <<= (dynamoDBLocalVersion, dynamoDBLocalDownloadUrl, dynamoDBLocalDownloadDir, dynamoDBLocalDownloadIfOlderThan, streams) map {
       case (ver, url, targetDir, downloadIfOlderThan, streamz) =>
@@ -97,51 +94,24 @@ object DynamoDBLocal extends AutoPlugin {
           streamz.log.info("Waiting for dynamodb local:")
           Utils.waitForDynamoDBLocal(port, (s: String) => streamz.log.info(s))
         }
-        getDynamoDBLocalPid.map { pid =>
-          dynamoDBLocalPid := pid
-          pid
-        }.getOrElse {
-          sys.error(s"Cannot find dynamodb local PID")
+        Utils.extractDynamoDBPid("jps".!!).getOrElse {
+          sys.error(s"Cannot find dynamodb local PID.")
         }
     },
-    //if compilation of test classes fails, dynamodb should not be invoked. (moreover, Test.Cleanup won't execute to stop it...)
-    startDynamoDBLocal <<= startDynamoDBLocal.dependsOn(compile in Test),
-    dynamoDBLocalPid <<= streams map {
-      case (streamz) =>
-        getDynamoDBLocalPid.map { pid =>
-          dynamoDBLocalPid := pid
-          pid
-        }.getOrElse {
-          // This is ok - it just means that DynamoDB isn't running, most likely because it was never started. :-)
-          streamz.log.info(s"Cannot find dynamodb local PID")
-          "0"
+    stopDynamoDBLocal <<= (streams, dynamoDBLocalDBPath, cleanDynamoDBLocalAfterStop) map {
+      case (streamz, dbPathOpt, clean) =>
+        Utils.extractDynamoDBPid("jps".!!) match {
+          case Some(pid) =>
+            streamz.log.info("Stopping dynamodb local:")
+            Utils.killPidCommand(pid).!
+          case None =>
+            streamz.log.warn("Cannot find dynamodb local PID.")
         }
-    },
-    stopDynamoDBLocal <<= (dynamoDBLocalPid, dynamoDBLocalDBPath, cleanDynamoDBLocalAfterStop) map {
-      case (pid, dbPath, cln) =>
-        killDynamoDBLocal(cln, dbPath, pid)
-    },
-    //make sure to Stop DynamoDB Local when tests are done.
-    testOptions in Test <+= (dynamoDBLocalPid, stopDynamoDBLocalAfterTests, cleanDynamoDBLocalAfterStop, dynamoDBLocalDBPath) map {
-      case (pid, stop, cln, dbPath) => Tests.Cleanup(() => {
-        if (stop && pid != "0") killDynamoDBLocal(cln, dbPath, pid)
-      })
+        if (clean) dbPathOpt.foreach { dbPath =>
+          streamz.log.info("Cleaning dynamodb local:")
+          val dir = new File(dbPath)
+          if (dir.exists()) sbt.IO.delete(dir)
+        }
     }
   )
-
-  private[this] def killDynamoDBLocal(clean: Boolean, dataDir: Option[String], pid: String) = {
-    val osName = System.getProperty("os.name") match {
-      case n: String if !n.isEmpty => n
-      case _ => System.getProperty("os")
-    }
-    if (osName.toLowerCase.contains("windows")) {
-      s"Taskkill /PID $pid /F".!
-    } else {
-      s"kill $pid".!
-    }
-    Utils.cleanDynamoDBLocal(clean, dataDir, pid)
-  }
-
-  private[this] def getDynamoDBLocalPid = Utils.extractDynamoDBPid("jps".!!)
-
 }
