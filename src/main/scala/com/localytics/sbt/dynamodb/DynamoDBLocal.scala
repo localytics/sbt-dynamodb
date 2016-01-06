@@ -10,7 +10,6 @@ import scala.concurrent.duration._
 
 object DynamoDBLocal extends AutoPlugin {
 
-  //http://dynamodb-local.s3-website-us-west-2.amazonaws.com/dynamodb_local_latest.tar.gz
   private val DefaultDynamoDBLocalUrlTemplate = { version: String =>
     s"http://dynamodb-local.s3-website-us-west-2.amazonaws.com/dynamodb_local_$version.tar.gz"
   }
@@ -78,20 +77,21 @@ object DynamoDBLocal extends AutoPlugin {
         }
     },
     startDynamoDBLocal <<= (deployDynamoDBLocal, dynamoDBLocalDownloadDir, dynamoDBLocalPort, dynamoDBLocalDBPath, dynamoDBLocalInMemory, dynamoDBLocalSharedDB, streams) map {
-      case (dyanmoHome, baseDir, port, dbPath, inMem, shared, streamz) =>
-        val args = Seq("java", s"-Djava.library.path=${new File(baseDir, DynamoDBLocalLibDir).getAbsolutePath}", "-jar", new File(baseDir, DynamoDBLocalJar).getAbsolutePath) ++
+      case (dynamoDBHome, baseDir, port, dbPath, inMem, shared, streamz) =>
+        val args = Seq("java", s"-Djava.library.path=${new File(baseDir, DynamoDBLocalLibDir).getAbsolutePath}") ++
+          Seq("-jar", new File(baseDir, DynamoDBLocalJar).getAbsolutePath) ++
           Seq("-port", port.toString) ++
           dbPath.map(db => Seq("-dbPath", db)).getOrElse(Nil) ++
           (if (inMem) Seq("-inMemory") else Nil) ++
           (if (shared) Seq("-sharedDb") else Nil)
 
-        if (!Utils.isDynamoDBLocalRunning(port)) {
+        if (Utils.isDynamoDBLocalRunning(port)) {
+          streamz.log.warn(s"dynamodb local is already running on port $port")
+        } else {
           streamz.log.info("Starting dynamodb local:")
           Process(args).run()
           streamz.log.info("Waiting for dynamodb local:")
           Utils.waitForDynamoDBLocal(port, (s: String) => streamz.log.info(s))
-        } else {
-          streamz.log.warn(s"dynamodb local is already running on port $port")
         }
         getDynamoDBLocalPid.map { pid =>
           dynamoDBLocalPid := pid
