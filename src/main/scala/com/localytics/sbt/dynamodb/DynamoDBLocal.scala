@@ -18,6 +18,7 @@ object DynamoDBLocal extends AutoPlugin {
     s"dynamodb_local_$version.tar.gz"
   }
   private val DefaultDynamoDBLocalVersion = "latest"
+  private val DefaultDynamoDBLocalDownloadDir = file("dynamodb-local")
   private val DynamoDBLocalLibDir = "DynamoDBLocal_lib"
   private val DynamoDBLocalJar = "DynamoDBLocal.jar"
   private val DefaultPort = 8000
@@ -46,6 +47,7 @@ object DynamoDBLocal extends AutoPlugin {
   def settings: Seq[Setting[_]] = Seq(
     dynamoDBLocalVersion := DefaultDynamoDBLocalVersion,
     dynamoDBLocalDownloadUrl := None,
+    dynamoDBLocalDownloadDir := DefaultDynamoDBLocalDownloadDir,
     dynamoDBLocalDownloadIfOlderThan := DefaultDynamoDBLocalDownloadIfOlderThan,
     dynamoDBLocalPort := DefaultPort,
     dynamoDBLocalDBPath := None,

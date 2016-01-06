@@ -19,14 +19,18 @@ Configuration
 -------------
 The following represents the minimum amount of code required in a `build.sbt` to use sbt-dynamodb.
 
-To use the dynamodb settings in your project, add `DynamoDBLocal.settings` to your build, set the directory to use for the DynamoDB Local jar and have your tests depend on starting the DynamoDB Local instance.
+To use the dynamodb settings in your project, add `DynamoDBLocal.settings` to your build and have your tests depend on starting the DynamoDB Local instance.
 
 ```
 DynamoDBLocal.settings
 
-DynamoDBLocal.Keys.dynamoDBLocalDownloadDirectory := file("dynamodb-local")
-
 test in Test <<= (test in Test).dependsOn(DynamoDBLocal.Keys.startDynamoDBLocal)
+```
+
+To download the DynamoDB Local jar to a specific location ("dynamodb-local" is the default)
+
+```
+dynamoDBLocalDownloadDir := file("my-dir")
 ```
 
 To use a specific version ("latest" is the default DynamoDB version to download and run)
