@@ -25,7 +25,7 @@ object DynamoDBLocal extends AutoPlugin {
     val dynamoDBLocalDownloadUrl = settingKey[Option[String]]("DynamoDB Local URL to download jar from (optional).")
     val dynamoDBLocalDownloadDir = settingKey[File]("The directory the DynamoDB Local jar will be downloaded to. Defaults to dynamodb-local.")
     val dynamoDBLocalDownloadIfOlderThan = settingKey[Duration]("Re-download the jar if the existing one is older than this. Defaults to 2 days.")
-    val dynamoDBLocalPort = settingKey[Option[Int]]("The port number that DynamoDB Local will use to communicate with your application. Defaults to 8000.")
+    val dynamoDBLocalPort = settingKey[Int]("The port number that DynamoDB Local will use to communicate with your application. Defaults to 8000.")
     val dynamoDBLocalDBPath = settingKey[Option[String]]("The directory where DynamoDB Local will write its database file. Defaults to the current directory.")
     val dynamoDBLocalInMemory = settingKey[Boolean]("Instead of using a database file, DynamoDB Local will run in memory. When you stop DynamoDB Local, none of the data will be saved.")
     val dynamoDBLocalSharedDB = settingKey[Boolean]("DynamoDB Local will use a single, shared database file. All clients will interact with the same set of tables regardless of their region and credential configuration.")
@@ -44,7 +44,7 @@ object DynamoDBLocal extends AutoPlugin {
     dynamoDBLocalVersion := DefaultDynamoDBLocalVersion,
     dynamoDBLocalDownloadUrl := None,
     dynamoDBLocalDownloadIfOlderThan := DefaultDynamoDBLocalDownloadIfOlderThan,
-    dynamoDBLocalPort := Some(DefaultPort),
+    dynamoDBLocalPort := DefaultPort,
     dynamoDBLocalDBPath := None,
     dynamoDBLocalInMemory := true,
     dynamoDBLocalSharedDB := false,
@@ -75,18 +75,18 @@ object DynamoDBLocal extends AutoPlugin {
     startDynamoDBLocal <<= (deployDynamoDBLocal, dynamoDBLocalDownloadDir, dynamoDBLocalPort, dynamoDBLocalDBPath, dynamoDBLocalInMemory, dynamoDBLocalSharedDB, streams) map {
       case (dyanmoHome, baseDir, port, dbPath, inMem, shared, streamz) =>
         val args = Seq("java", s"-Djava.library.path=${new File(baseDir, DynamoDBLocalLibDir).getAbsolutePath}", "-jar", new File(baseDir, DynamoDBLocalJar).getAbsolutePath) ++
-          port.map(p => Seq("-port", p.toString)).getOrElse(Nil) ++
+          Seq("-port", port.toString) ++
           dbPath.map(db => Seq("-dbPath", db)).getOrElse(Nil) ++
           (if (inMem) Seq("-inMemory") else Nil) ++
           (if (shared) Seq("-sharedDb") else Nil)
 
-        if (!Utils.isDynamoDBLocalRunning(port.getOrElse(DefaultPort))) {
+        if (!Utils.isDynamoDBLocalRunning(port)) {
           streamz.log.info("Starting dynamodb local:")
           Process(args).run()
           streamz.log.info("Waiting for dynamodb local:")
-          Utils.waitForDynamoDBLocal(port.getOrElse(DefaultPort), (s: String) => streamz.log.info(s))
+          Utils.waitForDynamoDBLocal(port, (s: String) => streamz.log.info(s))
         } else {
-          streamz.log.warn(s"dynamodb local is already running on port ${port.getOrElse(DefaultPort)}")
+          streamz.log.warn(s"dynamodb local is already running on port $port")
         }
         getDynamoDBLocalPid.map { pid =>
           dynamoDBLocalPid := pid

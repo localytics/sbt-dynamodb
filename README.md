@@ -45,7 +45,7 @@ dynamoDBLocalDownloadIfOlderThan := 2.days
 To specify a port other than the default `8000`
 
 ```
-dynamoDBLocalPort := Some(8080)
+dynamoDBLocalPort := 8080
 ```
 
 The default for the DynamoDB Local instance is to run in "in-memory" mode. To use a persistent file based mode you need to set both the data path & turn off in-memory.
