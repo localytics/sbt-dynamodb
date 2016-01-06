@@ -16,7 +16,7 @@ class UtilsTest extends FunSpec with Matchers {
           |51449
         """.stripMargin
 
-      Utils.extractDyanmoDBPid(jpsOutput) should equal(Some("59022"))
+      Utils.extractDynamoDBPid(jpsOutput) should equal(Some("59022"))
     }
 
   }

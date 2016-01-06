@@ -68,7 +68,7 @@ object DynamoDBLocal extends AutoPlugin {
           Process(Seq("tar", "xzf", outputFile.getAbsolutePath), targetDir).!
           outputFile
         } else {
-          streamz.log.error(s"Unable to find DyanmoDB Local jar at [${outputFile.getAbsolutePath}]")
+          streamz.log.error(s"Unable to find DynamoDB Local jar at [${outputFile.getAbsolutePath}]")
           sys.exit(1)
         }
     },
@@ -81,9 +81,9 @@ object DynamoDBLocal extends AutoPlugin {
           (if (shared) Seq("-sharedDb") else Nil)
 
         if (!Utils.isDynamoDBLocalRunning(port.getOrElse(DefaultPort))) {
-          streamz.log.info("Starting dyanmodb local:")
+          streamz.log.info("Starting dynamodb local:")
           Process(args).run()
-          streamz.log.info("Waiting for dyanmodb local:")
+          streamz.log.info("Waiting for dynamodb local:")
           Utils.waitForDynamoDBLocal(port.getOrElse(DefaultPort), (s: String) => streamz.log.info(s))
         } else {
           streamz.log.warn(s"dynamodb local is already running on port ${port.getOrElse(DefaultPort)}")
@@ -96,7 +96,7 @@ object DynamoDBLocal extends AutoPlugin {
           sys.exit(1)
         }
     },
-    //if compilation of test classes fails, dyanmodb should not be invoked. (moreover, Test.Cleanup won't execute to stop it...)
+    //if compilation of test classes fails, dynamodb should not be invoked. (moreover, Test.Cleanup won't execute to stop it...)
     startDynamoDBLocal <<= startDynamoDBLocal.dependsOn(compile in Test),
     dynamoDBLocalPid <<= streams map {
       case (streamz) =>
@@ -134,6 +134,6 @@ object DynamoDBLocal extends AutoPlugin {
     Utils.cleanDynamoDBLocal(clean, dataDir, pid)
   }
 
-  private[this] def getDynamoDBLocalPid = Utils.extractDyanmoDBPid("jps".!!)
+  private[this] def getDynamoDBLocalPid = Utils.extractDynamoDBPid("jps".!!)
 
 }

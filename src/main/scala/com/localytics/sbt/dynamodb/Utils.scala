@@ -8,7 +8,7 @@ private[dynamodb] object Utils {
 
   private val ProcessIDRegex = """\d+ DynamoDBLocal\.jar""".r
 
-  def extractDyanmoDBPid(input: String): Option[String] = ProcessIDRegex.findFirstIn(input).map(_.split(" ")(0))
+  def extractDynamoDBPid(input: String): Option[String] = ProcessIDRegex.findFirstIn(input).map(_.split(" ")(0))
 
   def cleanDynamoDBLocal(clean: Boolean, dataDir: Option[String], pid: String) = {
     if (clean && dataDir.exists(d => new File(d).exists())) sbt.IO.delete(new File(dataDir.get))
@@ -30,7 +30,7 @@ private[dynamodb] object Utils {
         socket.close()
       }.recover {
         case e: Exception =>
-          infoPrintFunc(s"Waiting for dyanmodb local to boot on port $port")
+          infoPrintFunc(s"Waiting for dynamodb local to boot on port $port")
           Thread.sleep(500)
           continue = false
       }
