@@ -14,6 +14,9 @@ object DynamoDBLocal extends AutoPlugin {
   private val DefaultDynamoDBLocalUrlTemplate = { version: String =>
     s"http://dynamodb-local.s3-website-us-west-2.amazonaws.com/dynamodb_local_$version.tar.gz"
   }
+  private val DefaultDynamoDBLocalDownloadFileNameTemplate = { version: String =>
+    s"dynamodb_local_$version.tar.gz"
+  }
   private val DefaultDynamoDBLocalVersion = "latest"
   private val DynamoDBLocalLibDir = "DynamoDBLocal_lib"
   private val DynamoDBLocalJar = "DynamoDBLocal.jar"
@@ -53,7 +56,7 @@ object DynamoDBLocal extends AutoPlugin {
     deployDynamoDBLocal <<= (dynamoDBLocalVersion, dynamoDBLocalDownloadUrl, dynamoDBLocalDownloadDir, dynamoDBLocalDownloadIfOlderThan, streams) map {
       case (ver, url, targetDir, downloadIfOlderThan, streamz) =>
         import sys.process._
-        val outputFile = new File(targetDir, s"dynamodb_local_$ver.tar.gz")
+        val outputFile = new File(targetDir, DefaultDynamoDBLocalDownloadFileNameTemplate(ver))
         if (!targetDir.exists()) {
           streamz.log.info(s"Creating DynamoDB Local directory $targetDir:")
           targetDir.mkdirs()
