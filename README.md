@@ -15,14 +15,20 @@ Add the following to your `project/plugins.sbt` file:
 addSbtPlugin("com.localytics" % "sbt-dynamodb" % "1.2")
 ```
 
+Usage
+-----
+
+To use DynamoDB Local in your project you can call `start-dynamodb-local` and `stop-dynamodb-local` directly in `sbt`.
+
 Configuration
 -------------
-The following represents the minimum amount of code required in a `build.sbt` to use sbt-dynamodb.
 
-To use the dynamodb settings in your project have your tests depend on starting the DynamoDB Local instance.
+To have DynamoDB Local automatically start and stop around your tests
 
 ```
+
 test in Test <<= (test in Test).dependsOn(startDynamoDBLocal)
+testOptions in Test += Tests.Cleanup(() => stopDynamoDBLocal.value)
 ```
 
 To download the DynamoDB Local jar to a specific location ("dynamodb-local" is the default)
@@ -54,7 +60,6 @@ The default for the DynamoDB Local instance is to run in "in-memory" mode. To us
 
 ```
 dynamoDBLocalInMemory := false
-
 dynamoDBLocalDBPath := Some("some/directory/here")
 ```
 
@@ -64,12 +69,8 @@ The default for DynamoDB Local instance is to use a separate file for each crede
 dynamoDBLocalSharedDB := true
 ```
 
-The default regarding tests is to both stop & cleanup any data directory if specified. This can be changed using the below settings.
+The default on stop is to cleanup any data directory if specified. This can be changed using
 
 ```
-stopDynamoDBLocalAfterTests := false
-
 cleanDynamoDBLocalAfterStop := false
 ```
-
-##### Note: Regarding stopping the DynamoDB Local instance after the tests. To ensure the instance is stopped, please make sure not to override ```testOptions in Test``` and instead append (e.g. use `+=` instead of `:=`).
