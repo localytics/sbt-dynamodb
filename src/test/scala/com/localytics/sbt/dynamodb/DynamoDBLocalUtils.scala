@@ -2,9 +2,9 @@ package com.localytics.sbt.dynamodb
 
 import org.scalatest.{FunSpec, Matchers}
 
-class UtilsTest extends FunSpec with Matchers {
+class DynamoDBLocalUtils extends FunSpec with Matchers {
 
-  describe("Utils") {
+  describe("DynamoDBLocalUtils") {
 
     it("should extract PID correctly") {
       val jpsOutput =
@@ -16,7 +16,7 @@ class UtilsTest extends FunSpec with Matchers {
           |51449
         """.stripMargin
 
-      Utils.extractDynamoDBPid(jpsOutput) should equal(Some("59022"))
+      DynamoDBLocalUtils.extractDynamoDBPid(jpsOutput) should equal(Some("59022"))
     }
 
   }
