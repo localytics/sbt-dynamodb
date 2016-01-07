@@ -23,7 +23,11 @@ object DynamoDBLocal extends AutoPlugin {
   private val DefaultPort = 8000
   private val DefaultDynamoDBLocalDownloadIfOlderThan = 2.days
 
-  object Keys {
+  // auto enable plugin http://www.scala-sbt.org/0.13/docs/Plugins.html#Root+plugins+and+triggered+plugins
+  override def trigger = allRequirements
+
+  // inject project keys http://www.scala-sbt.org/0.13/docs/Plugins.html#Controlling+the+import+with+autoImport
+  object autoImport {
     val dynamoDBLocalVersion = settingKey[String]("DynamoDB Local version to download. Defaults to latest.")
     val dynamoDBLocalDownloadUrl = settingKey[Option[String]]("DynamoDB Local URL to download jar from (optional).")
     val dynamoDBLocalDownloadDir = settingKey[File]("The directory the DynamoDB Local jar will be downloaded to. Defaults to dynamodb-local.")
@@ -41,9 +45,10 @@ object DynamoDBLocal extends AutoPlugin {
     val stopDynamoDBLocal = TaskKey[Unit]("stop-dynamodb-local")
   }
 
-  import Keys._
+  import autoImport._
 
-  def settings: Seq[Setting[_]] = Seq(
+  // inject project settings http://www.scala-sbt.org/0.13/docs/Plugins.html#projectSettings+and+buildSettings
+  override lazy val projectSettings = Seq(
     dynamoDBLocalVersion := DefaultDynamoDBLocalVersion,
     dynamoDBLocalDownloadUrl := None,
     dynamoDBLocalDownloadDir := DefaultDynamoDBLocalDownloadDir,
