@@ -72,8 +72,7 @@ object DynamoDBLocal extends AutoPlugin {
           Process(Seq("tar", "xzf", outputFile.getAbsolutePath), targetDir).!
           outputFile
         } else {
-          streamz.log.error(s"Unable to find DynamoDB Local jar at [${outputFile.getAbsolutePath}]")
-          sys.exit(1)
+          sys.error(s"Cannot to find DynamoDB Local jar at [${outputFile.getAbsolutePath}].")
         }
     },
     startDynamoDBLocal <<= (deployDynamoDBLocal, dynamoDBLocalDownloadDir, dynamoDBLocalPort, dynamoDBLocalDBPath, dynamoDBLocalInMemory, dynamoDBLocalSharedDB, streams) map {
@@ -97,8 +96,7 @@ object DynamoDBLocal extends AutoPlugin {
           dynamoDBLocalPid := pid
           pid
         }.getOrElse {
-          streamz.log.error(s"Cannot find dynamodb local PID")
-          sys.exit(1)
+          sys.error(s"Cannot find dynamodb local PID")
         }
     },
     //if compilation of test classes fails, dynamodb should not be invoked. (moreover, Test.Cleanup won't execute to stop it...)
