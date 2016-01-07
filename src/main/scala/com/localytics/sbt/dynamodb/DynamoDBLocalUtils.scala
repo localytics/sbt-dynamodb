@@ -2,7 +2,7 @@ package com.localytics.sbt.dynamodb
 
 import scala.util.Try
 
-private[dynamodb] object Utils {
+private[dynamodb] object DynamoDBLocalUtils {
 
   private val ProcessIDRegex = """\d+ DynamoDBLocal\.jar""".r
 
