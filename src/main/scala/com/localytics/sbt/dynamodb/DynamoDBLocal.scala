@@ -36,7 +36,7 @@ object DynamoDBLocal extends AutoPlugin {
     val dynamoDBLocalDBPath = settingKey[Option[String]]("The directory where DynamoDB Local will write its database file. Defaults to the current directory.")
     val dynamoDBLocalInMemory = settingKey[Boolean]("Instead of using a database file, DynamoDB Local will run in memory. When you stop DynamoDB Local, none of the data will be saved.")
     val dynamoDBLocalSharedDB = settingKey[Boolean]("DynamoDB Local will use a single, shared database file. All clients will interact with the same set of tables regardless of their region and credential configuration.")
-    val cleanDynamoDBLocalAfterStop = SettingKey[Boolean]("clean-dynamodb-local-after-stop")
+    val dynamoDBLocalCleanAfterStop = SettingKey[Boolean]("clean-dynamodb-local-after-stop")
 
     val deployDynamoDBLocal = TaskKey[File]("deploy-dynamodb-local")
     val startDynamoDBLocal = TaskKey[String]("start-dynamodb-local")
@@ -55,7 +55,7 @@ object DynamoDBLocal extends AutoPlugin {
     dynamoDBLocalDBPath := None,
     dynamoDBLocalInMemory := true,
     dynamoDBLocalSharedDB := false,
-    cleanDynamoDBLocalAfterStop := true,
+    dynamoDBLocalCleanAfterStop := true,
     deployDynamoDBLocal <<= (dynamoDBLocalVersion, dynamoDBLocalDownloadUrl, dynamoDBLocalDownloadDir, dynamoDBLocalDownloadIfOlderThan, streams) map {
       case (ver, url, targetDir, downloadIfOlderThan, streamz) =>
         import sys.process._
@@ -98,7 +98,7 @@ object DynamoDBLocal extends AutoPlugin {
           sys.error(s"Cannot find dynamodb local PID.")
         }
     },
-    stopDynamoDBLocal <<= (streams, dynamoDBLocalDBPath, cleanDynamoDBLocalAfterStop) map {
+    stopDynamoDBLocal <<= (streams, dynamoDBLocalDBPath, dynamoDBLocalCleanAfterStop) map {
       case (streamz, dbPathOpt, clean) =>
         Utils.extractDynamoDBPid("jps".!!) match {
           case Some(pid) =>

@@ -72,5 +72,5 @@ dynamoDBLocalSharedDB := true
 The default on stop is to cleanup any data directory if specified. This can be changed using
 
 ```
-cleanDynamoDBLocalAfterStop := false
+dynamoDBLocalCleanAfterStop := false
 ```
