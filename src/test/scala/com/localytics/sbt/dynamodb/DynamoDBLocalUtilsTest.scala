@@ -2,7 +2,7 @@ package com.localytics.sbt.dynamodb
 
 import org.scalatest.{FunSpec, Matchers}
 
-class DynamoDBLocalUtils extends FunSpec with Matchers {
+class DynamoDBLocalUtilsTest extends FunSpec with Matchers {
 
   describe("DynamoDBLocalUtils") {
 
