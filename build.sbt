@@ -34,4 +34,4 @@ conflictManager := ConflictManager.strict
 // http://www.scala-sbt.org/0.13/docs/sbt-0.13-Tech-Previews.html#Circular+dependency
 updateOptions := updateOptions.value.withCircularDependencyLevel(CircularDependencyLevel.Error)
 
-libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.5" % "test"
+libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.6" % "test"
