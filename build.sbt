@@ -1,5 +1,7 @@
 name := "sbt-dynamodb"
 
+description := "Support for running DynamoDB Local in your integration tests"
+
 organization := "com.localytics"
 
 // Sane set of compiler flags
@@ -25,6 +27,18 @@ publishMavenStyle := false
 // MIT License for bintray
 // https://github.com/softprops/bintray-sbt#licenses
 licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
+
+// Publish to the Localytics organization
+// https://github.com/softprops/bintray-sbt#publishing
+bintrayOrganization := Some("localytics")
+
+// Split staging from publishing
+// https://github.com/softprops/bintray-sbt#staging-optional
+bintrayReleaseOnPublish in ThisBuild := false
+
+// Bintray labels
+// https://github.com/softprops/bintray-sbt#labels
+bintrayPackageLabels := Seq("localytics", "sbt", "aws", "dynamodb", "test", "testing")
 
 // Error on conflicting dependencies
 // http://www.scala-sbt.org/0.13/docs/Library-Management.html#Conflict+Management
