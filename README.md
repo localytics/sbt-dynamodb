@@ -5,7 +5,9 @@ Support for running [DynamoDB Local](http://docs.aws.amazon.com/amazondynamodb/l
 
 Based on the [Maven Plugin for DynamoDB](https://github.com/jcabi/jcabi-dynamodb-maven-plugin).
 
-Initial [implementation](https://github.com/grahamar/sbt-dynamodb) by [Graham Rhodes](https://github.com/grahamar).  
+Initial [implementation](https://github.com/grahamar/sbt-dynamodb) by [Graham Rhodes](https://github.com/grahamar). 
+
+[![MIT license](https://img.shields.io/badge/license-MIT%20License-blue.svg)](LICENSE) 
 
 Installation
 ------------
