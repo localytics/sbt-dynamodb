@@ -1,11 +1,9 @@
 sbt-dynamodb
 ===============
 
-Support for running [DynamoDB Local](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Tools.html) for use in integration tests.
+Support for running [DynamoDB Local](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Tools.html) in tests.
 
-Based on the [Maven Plugin for DynamoDB](https://github.com/jcabi/jcabi-dynamodb-maven-plugin).
-
-Initial [implementation](https://github.com/grahamar/sbt-dynamodb) by [Graham Rhodes](https://github.com/grahamar).  
+[![MIT license](https://img.shields.io/badge/license-MIT%20License-blue.svg)](LICENSE) 
 
 Installation
 ------------
@@ -14,6 +12,8 @@ Add the following to your `project/plugins.sbt` file:
 ```
 addSbtPlugin("com.localytics" % "sbt-dynamodb" % "1.2")
 ```
+
+sbt 0.13.6+ is supported, 0.13.5 should work with the right bintray resolvers
 
 Usage
 -----
@@ -74,3 +74,10 @@ The default on stop is to cleanup any data directory if specified. This can be c
 ```
 dynamoDBLocalCleanAfterStop := false
 ```
+
+Thanks
+-----
+
+This work is based on the [Maven Plugin for DynamoDB](https://github.com/jcabi/jcabi-dynamodb-maven-plugin).
+
+The [initial implementation](https://github.com/grahamar/sbt-dynamodb) was developed by [Graham Rhodes](https://github.com/grahamar). 
