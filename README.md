@@ -3,10 +3,6 @@ sbt-dynamodb
 
 Support for running [DynamoDB Local](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Tools.html) for use in integration tests.
 
-Based on the [Maven Plugin for DynamoDB](https://github.com/jcabi/jcabi-dynamodb-maven-plugin).
-
-Initial [implementation](https://github.com/grahamar/sbt-dynamodb) by [Graham Rhodes](https://github.com/grahamar). 
-
 [![MIT license](https://img.shields.io/badge/license-MIT%20License-blue.svg)](LICENSE) 
 
 Installation
@@ -78,3 +74,10 @@ The default on stop is to cleanup any data directory if specified. This can be c
 ```
 dynamoDBLocalCleanAfterStop := false
 ```
+
+Thanks
+-----
+
+This work is based on the [Maven Plugin for DynamoDB](https://github.com/jcabi/jcabi-dynamodb-maven-plugin).
+
+The [initial implementation](https://github.com/grahamar/sbt-dynamodb) was developed by [Graham Rhodes](https://github.com/grahamar). 
