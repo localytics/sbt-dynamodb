@@ -2,7 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [1.2]
+- Make lifecycle management explict and easy to use outside of the default test config
+- Make use of autoplugin to automatically import keys and settings
 - Converted packages to com.localtyics
 - Support test configuration where DynamoDB was never started ([grahamar/sbt-dynamodb#8](https://github.com/grahamar/sbt-dynamodb/pull/8))
 - adds -sharedDB flag ([grahamar/sbt-dynamodb#7](https://github.com/grahamar/sbt-dynamodb/pull/7))
