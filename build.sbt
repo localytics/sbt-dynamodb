@@ -32,10 +32,6 @@ licenses += ("MIT", url("http://opensource.org/licenses/MIT"))
 // https://github.com/softprops/bintray-sbt#publishing
 bintrayOrganization := Some("localytics")
 
-// Split staging from publishing
-// https://github.com/softprops/bintray-sbt#staging-optional
-bintrayReleaseOnPublish in ThisBuild := false
-
 // Bintray labels
 // https://github.com/softprops/bintray-sbt#labels
 bintrayPackageLabels := Seq("localytics", "sbt", "aws", "dynamodb", "test", "testing")
