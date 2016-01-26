@@ -15,7 +15,7 @@ object DynamoDBLocalTasks {
       import sys.process._
       val outputFile = new File(targetDir, s"dynamodb_local_$ver.tar.gz")
       if (!targetDir.exists()) {
-        streamz.log.info(s"Creating DynamoDB Local directory $targetDir:")
+        streamz.log.info(s"Creating DynamoDB Local directory $targetDir")
         targetDir.mkdirs()
       }
       if (!outputFile.exists() || ((ver == "latest") && (System.currentTimeMillis - outputFile.lastModified() > downloadIfOlderThan.toMillis))) {
@@ -28,7 +28,7 @@ object DynamoDBLocalTasks {
         Process(Seq("tar", "xzf", outputFile.getAbsolutePath), targetDir).!
         outputFile
       } else {
-        sys.error(s"Cannot to find DynamoDB Local jar at [${outputFile.getAbsolutePath}].")
+        sys.error(s"Cannot to find DynamoDB Local jar at [${outputFile.getAbsolutePath}]")
       }
   }
 
@@ -44,13 +44,13 @@ object DynamoDBLocalTasks {
       if (isDynamoDBLocalRunning(port)) {
         streamz.log.warn(s"dynamodb local is already running on port $port")
       } else {
-        streamz.log.info("Starting dynamodb local:")
+        streamz.log.info("Starting dynamodb local")
         Process(args).run()
-        streamz.log.info("Waiting for dynamodb local:")
+        streamz.log.info("Waiting for dynamodb local")
         waitForDynamoDBLocal(port, (s: String) => streamz.log.info(s))
       }
       extractDynamoDBPid("jps".!!).getOrElse {
-        sys.error(s"Cannot find dynamodb local PID.")
+        sys.error(s"Cannot find dynamodb local PID")
       }
   }
 
@@ -58,13 +58,13 @@ object DynamoDBLocalTasks {
     case (streamz, dbPathOpt, clean) =>
       extractDynamoDBPid("jps".!!) match {
         case Some(pid) =>
-          streamz.log.info("Stopping dynamodb local:")
+          streamz.log.info("Stopping dynamodb local")
           killPidCommand(pid).!
         case None =>
-          streamz.log.warn("Cannot find dynamodb local PID.")
+          streamz.log.warn("Cannot find dynamodb local PID")
       }
       if (clean) dbPathOpt.foreach { dbPath =>
-        streamz.log.info("Cleaning dynamodb local:")
+        streamz.log.info("Cleaning dynamodb local")
         val dir = new File(dbPath)
         if (dir.exists()) sbt.IO.delete(dir)
       }
