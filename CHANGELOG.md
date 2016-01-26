@@ -2,7 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.2]
+## [1.2.1] - 2016-01-26
+- Fix broken task names
+
+## [1.2] - 2016-01-12
 - Make lifecycle management explict and easy to use outside of the default test config
 - Make use of autoplugin to automatically import keys and settings
 - Converted packages to com.localtyics

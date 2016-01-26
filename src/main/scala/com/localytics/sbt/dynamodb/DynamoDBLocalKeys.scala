@@ -15,9 +15,9 @@ object DynamoDBLocalKeys {
   lazy val dynamoDBLocalDBPath = settingKey[Option[String]]("The directory where DynamoDB Local will write its database file. Defaults to the current directory.")
   lazy val dynamoDBLocalInMemory = settingKey[Boolean]("Instead of using a database file, DynamoDB Local will run in memory. When you stop DynamoDB Local, none of the data will be saved.")
   lazy val dynamoDBLocalSharedDB = settingKey[Boolean]("DynamoDB Local will use a single, shared database file. All clients will interact with the same set of tables regardless of their region and credential configuration.")
-  lazy val dynamoDBLocalCleanAfterStop = settingKey[Boolean]("clean-dynamodb-local-after-stop")
+  lazy val dynamoDBLocalCleanAfterStop = settingKey[Boolean]("Clean the local data directory after DynamoDB Local shutdown. Defaults to true.")
 
-  lazy val deployDynamoDBLocal = taskKey[File]("deploy-dynamodb-local")
-  lazy val startDynamoDBLocal = taskKey[String]("start-dynamodb-local")
-  lazy val stopDynamoDBLocal = taskKey[Unit]("stop-dynamodb-local")
+  lazy val deployDynamoDBLocal = TaskKey[File]("deploy-dynamodb-local")
+  lazy val startDynamoDBLocal = TaskKey[String]("start-dynamodb-local")
+  lazy val stopDynamoDBLocal = TaskKey[Unit]("stop-dynamodb-local")
 }
