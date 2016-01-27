@@ -1,5 +1,9 @@
 # Contributing
 
+Fork, then clone the repo:
+
+    git clone git@github.com:your-username/sbt-dynamodb.git
+
 Create a new branch for your work:
 
     git checkout -b <my_branch_name>
