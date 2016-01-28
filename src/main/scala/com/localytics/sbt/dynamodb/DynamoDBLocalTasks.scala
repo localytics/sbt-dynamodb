@@ -46,8 +46,10 @@ object DynamoDBLocalTasks {
       } else {
         streamz.log.info("Starting dynamodb local")
         Process(args).run()
-        streamz.log.info("Waiting for dynamodb local")
-        waitForDynamoDBLocal(port, (s: String) => streamz.log.info(s))
+        do {
+          streamz.log.info(s"Waiting for dynamodb local to boot on port $port")
+          Thread.sleep(500)
+        } while (!isDynamoDBLocalRunning(port))
       }
       extractDynamoDBPid("jps".!!).getOrElse {
         sys.error(s"Cannot find dynamodb local PID")

@@ -15,22 +15,6 @@ private[dynamodb] object DynamoDBLocalUtils {
     }.isSuccess
   }
 
-  def waitForDynamoDBLocal(port: Int, infoPrintFunc: String => Unit): Unit = {
-    var continue = false
-    while (!continue) {
-      continue = true
-      Try {
-        val socket = new java.net.Socket("localhost", port)
-        socket.close()
-      }.recover {
-        case e: Exception =>
-          infoPrintFunc(s"Waiting for dynamodb local to boot on port $port")
-          Thread.sleep(500)
-          continue = false
-      }
-    }
-  }
-
   def killPidCommand(pid: String): String = {
     val osName = System.getProperty("os.name") match {
       case n: String if !n.isEmpty => n
