@@ -28,7 +28,7 @@ To have DynamoDB Local automatically start and stop around your tests
 ```
 startDynamoDBLocal <<= startDynamoDBLocal.dependsOn(compile in Test)
 test in Test <<= (test in Test).dependsOn(startDynamoDBLocal)
-testOptions in Test += Tests.Cleanup(() => stopDynamoDBLocal.value)
+test in Test <<= (test in Test, stopDynamoDBLocal) { (test, stop) => test doFinally stop }
 ```
 
 To download the DynamoDB Local jar to a specific location ("dynamodb-local" is the default)
