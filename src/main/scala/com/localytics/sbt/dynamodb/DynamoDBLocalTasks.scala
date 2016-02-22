@@ -32,9 +32,11 @@ object DynamoDBLocalTasks {
       }
   }
 
-  def startDynamoDBLocalTask = (deployDynamoDBLocal, dynamoDBLocalDownloadDir, dynamoDBLocalPort, dynamoDBLocalDBPath, dynamoDBLocalInMemory, dynamoDBLocalSharedDB, streams) map {
-    case (dynamoDBHome, baseDir, port, dbPath, inMem, shared, streamz) =>
+  def startDynamoDBLocalTask = (deployDynamoDBLocal, dynamoDBLocalDownloadDir, dynamoDBLocalPort, dynamoDBLocalHeapSize,
+                                dynamoDBLocalDBPath, dynamoDBLocalInMemory, dynamoDBLocalSharedDB, streams) map {
+    case (dynamoDBHome, baseDir, port, heapSize, dbPath, inMem, shared, streamz) =>
       val args = Seq("java", s"-Djava.library.path=${new File(baseDir, "DynamoDBLocal_lib").getAbsolutePath}") ++
+        heapSize.map(mb => Seq(s"-Xms${mb}m", s"-Xmx${mb}m")).getOrElse(Nil) ++
         Seq("-jar", new File(baseDir, "DynamoDBLocal.jar").getAbsolutePath) ++
         Seq("-port", port.toString) ++
         dbPath.map(db => Seq("-dbPath", db)).getOrElse(Nil) ++

@@ -10,7 +10,7 @@ Installation
 Add the following to your `project/plugins.sbt` file:
 
 ```
-addSbtPlugin("com.localytics" % "sbt-dynamodb" % "1.2.1")
+addSbtPlugin("com.localytics" % "sbt-dynamodb" % "1.3.0")
 ```
 
 sbt 0.13.6+ is supported, 0.13.5 should work with the right bintray resolvers
@@ -54,6 +54,12 @@ To specify a port other than the default `8000`
 
 ```
 dynamoDBLocalPort := 8080
+```
+
+To override the default JVM heap size (specified in MB)
+
+```
+dynamoDBLocalHeapSize := Some(1024)
 ```
 
 The default for the DynamoDB Local instance is to run in "in-memory" mode. To use a persistent file based mode you need to set both the data path & turn off in-memory.

@@ -22,6 +22,7 @@ object DynamoDBLocalPlugin extends AutoPlugin {
     dynamoDBLocalDownloadIfOlderThan := 2.days,
     dynamoDBLocalPort := 8000,
     dynamoDBLocalDBPath := None,
+    dynamoDBLocalHeapSize := None,
     dynamoDBLocalInMemory := true,
     dynamoDBLocalSharedDB := false,
     dynamoDBLocalCleanAfterStop := true,
