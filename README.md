@@ -56,6 +56,12 @@ To specify a port other than the default `8000`
 dynamoDBLocalPort := 8080
 ```
 
+To override the default JVM heap size (specified in MB)
+
+```
+dynamoDBLocalHeapSize := Some(1024)
+```
+
 The default for the DynamoDB Local instance is to run in "in-memory" mode. To use a persistent file based mode you need to set both the data path & turn off in-memory.
 
 ```
