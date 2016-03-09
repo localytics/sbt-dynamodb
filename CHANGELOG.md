@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.3.1] - 2016-03-09
+- Fail if the tar.gz file is corrupt
+
 ## [1.3.0] - 2016-02-22
 - Add HeapSize configuration
 
