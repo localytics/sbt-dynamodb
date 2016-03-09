@@ -25,7 +25,7 @@ object DynamoDBLocalTasks {
       }
       if (outputFile.exists()) {
         streamz.log.info(s"Extracting file: [${outputFile.getAbsolutePath}]")
-        Process(Seq("tar", "xzf", outputFile.getAbsolutePath), targetDir).!
+        Process(Seq("tar", "xzf", outputFile.getAbsolutePath), targetDir).!!
         outputFile
       } else {
         sys.error(s"Cannot to find DynamoDB Local jar at [${outputFile.getAbsolutePath}]")
