@@ -10,7 +10,7 @@ Installation
 Add the following to your `project/plugins.sbt` file:
 
 ```
-addSbtPlugin("com.localytics" % "sbt-dynamodb" % "1.3.1")
+addSbtPlugin("com.localytics" % "sbt-dynamodb" % "1.4.0")
 ```
 
 sbt 0.13.6+ is supported, 0.13.5 should work with the right bintray resolvers
@@ -28,7 +28,7 @@ To have DynamoDB Local automatically start and stop around your tests
 ```
 startDynamoDBLocal <<= startDynamoDBLocal.dependsOn(compile in Test)
 test in Test <<= (test in Test).dependsOn(startDynamoDBLocal)
-test in Test <<= (test in Test, stopDynamoDBLocal) { (test, stop) => test doFinally stop }
+testOptions in Test <+= dynamoDBLocalTestCleanup
 ```
 
 To download the DynamoDB Local jar to a specific location ("dynamodb-local" is the default)

@@ -59,19 +59,26 @@ object DynamoDBLocalTasks {
   }
 
   def stopDynamoDBLocalTask = (streams, dynamoDBLocalDBPath, dynamoDBLocalCleanAfterStop) map {
-    case (streamz, dbPathOpt, clean) =>
-      extractDynamoDBPid("jps".!!) match {
-        case Some(pid) =>
-          streamz.log.info("Stopping dynamodb local")
-          killPidCommand(pid).!
-        case None =>
-          streamz.log.warn("Cannot find dynamodb local PID")
-      }
-      if (clean) dbPathOpt.foreach { dbPath =>
-        streamz.log.info("Cleaning dynamodb local")
-        val dir = new File(dbPath)
-        if (dir.exists()) sbt.IO.delete(dir)
-      }
+    case (streamz, dbPathOpt, clean) => stopDynamoDBLocalHelper(streamz, dbPathOpt, clean)
+  }
+
+  def dynamoDBLocalTestCleanupTask = (streams, dynamoDBLocalDBPath, dynamoDBLocalCleanAfterStop) map {
+    case (streamz, dbPathOpt, clean) => Tests.Cleanup(() => stopDynamoDBLocalHelper(streamz, dbPathOpt, clean))
+  }
+
+  def stopDynamoDBLocalHelper(streamz: Keys.TaskStreams, dbPathOpt: Option[String], clean: Boolean) = {
+    extractDynamoDBPid("jps".!!) match {
+      case Some(pid) =>
+        streamz.log.info("Stopping dynamodb local")
+        killPidCommand(pid).!
+      case None =>
+        streamz.log.warn("Cannot find dynamodb local PID")
+    }
+    if (clean) dbPathOpt.foreach { dbPath =>
+      streamz.log.info("Cleaning dynamodb local")
+      val dir = new File(dbPath)
+      if (dir.exists()) sbt.IO.delete(dir)
+    }
   }
 
 }
