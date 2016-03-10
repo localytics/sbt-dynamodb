@@ -21,4 +21,5 @@ object DynamoDBLocalKeys {
   lazy val deployDynamoDBLocal = TaskKey[File]("deploy-dynamodb-local")
   lazy val startDynamoDBLocal = TaskKey[String]("start-dynamodb-local")
   lazy val stopDynamoDBLocal = TaskKey[Unit]("stop-dynamodb-local")
+  lazy val dynamoDBLocalTestCleanup = TaskKey[Tests.Cleanup]("dynamodb-local-test-cleanup")
 }

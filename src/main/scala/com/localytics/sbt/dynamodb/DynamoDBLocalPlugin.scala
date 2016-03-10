@@ -28,6 +28,7 @@ object DynamoDBLocalPlugin extends AutoPlugin {
     dynamoDBLocalCleanAfterStop := true,
     deployDynamoDBLocal <<= deployDynamoDBLocalTask,
     startDynamoDBLocal <<= startDynamoDBLocalTask,
-    stopDynamoDBLocal <<= stopDynamoDBLocalTask
+    stopDynamoDBLocal <<= stopDynamoDBLocalTask,
+    dynamoDBLocalTestCleanup <<= dynamoDBLocalTestCleanupTask
   )
 }
