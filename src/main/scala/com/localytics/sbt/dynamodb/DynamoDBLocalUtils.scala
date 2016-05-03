@@ -1,13 +1,15 @@
 package com.localytics.sbt.dynamodb
 
+import java.io.File
 import scala.util.Try
-
 
 object DynamoDBLocalUtils {
 
-  val ProcessIDRegex = """\d+ DynamoDBLocal\.jar""".r
-
-  def extractDynamoDBPid(input: String): Option[String] = ProcessIDRegex.findFirstIn(input).map(_.split(" ")(0))
+  def extractDynamoDBPid(input: String, port: Int, baseDir: File): Option[String] = {
+    val jarPath = (new File(baseDir, "DynamoDBLocal.jar")).getAbsolutePath
+    val pidPortRegex = s"\\d+ ${jarPath} -port ${port}".r
+    pidPortRegex.findFirstIn(input).map(_.split(" ")(0))
+  }
 
   def isDynamoDBLocalRunning(port: Int): Boolean =
     Try {
