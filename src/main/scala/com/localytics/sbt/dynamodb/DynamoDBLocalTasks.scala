@@ -53,21 +53,23 @@ object DynamoDBLocalTasks {
           Thread.sleep(500)
         } while (!isDynamoDBLocalRunning(port))
       }
-      extractDynamoDBPid("jps".!!).getOrElse {
-        sys.error(s"Cannot find dynamodb local PID")
+      extractDynamoDBPid("jps -ml".!!, port, baseDir).getOrElse {
+        sys.error(s"Cannot find dynamodb local PID running on ${port}")
       }
   }
 
-  def stopDynamoDBLocalTask = (streams, dynamoDBLocalDBPath, dynamoDBLocalCleanAfterStop) map {
-    case (streamz, dbPathOpt, clean) => stopDynamoDBLocalHelper(streamz, dbPathOpt, clean)
+  def stopDynamoDBLocalTask = (streams, dynamoDBLocalDBPath, dynamoDBLocalCleanAfterStop, dynamoDBLocalPort, dynamoDBLocalDownloadDir) map {
+    case (streamz, dbPathOpt, clean, port, baseDir) =>
+      stopDynamoDBLocalHelper(streamz, dbPathOpt, clean, port, baseDir)
   }
 
-  def dynamoDBLocalTestCleanupTask = (streams, dynamoDBLocalDBPath, dynamoDBLocalCleanAfterStop) map {
-    case (streamz, dbPathOpt, clean) => Tests.Cleanup(() => stopDynamoDBLocalHelper(streamz, dbPathOpt, clean))
+  def dynamoDBLocalTestCleanupTask = (streams, dynamoDBLocalDBPath, dynamoDBLocalCleanAfterStop, dynamoDBLocalPort, dynamoDBLocalDownloadDir) map {
+    case (streamz, dbPathOpt, clean, port, baseDir) =>
+      Tests.Cleanup(() => stopDynamoDBLocalHelper(streamz, dbPathOpt, clean, port, baseDir))
   }
 
-  def stopDynamoDBLocalHelper(streamz: Keys.TaskStreams, dbPathOpt: Option[String], clean: Boolean) = {
-    extractDynamoDBPid("jps".!!) match {
+  def stopDynamoDBLocalHelper(streamz: Keys.TaskStreams, dbPathOpt: Option[String], clean: Boolean, port: Int, baseDir: File) = {
+    extractDynamoDBPid("jps -ml".!!, port, baseDir) match {
       case Some(pid) =>
         streamz.log.info("Stopping dynamodb local")
         killPidCommand(pid).!
