@@ -1,7 +1,10 @@
 package com.localytics.sbt.dynamodb
 
 import java.io.File
+
 import org.scalatest.{FunSpec, Matchers}
+
+import scala.io.Source
 
 class DynamoDBLocalUtilsTest extends FunSpec with Matchers {
 
@@ -36,6 +39,21 @@ class DynamoDBLocalUtilsTest extends FunSpec with Matchers {
 
     }
 
+    it("should identify a valid jar") {
+      DynamoDBLocalUtils.validJar(new File(getClass.getResource("/valid.jar").getFile)) should be(true)
+    }
+
+    it("should identify an invalid jar") {
+      DynamoDBLocalUtils.validJar(new File(getClass.getResource("/invalid.jar").getFile)) should be(false)
+    }
+
+    it("should identify a valid gz") {
+      DynamoDBLocalUtils.validGzip(new File(getClass.getResource("/valid.tar.gz").getFile)) should be(true)
+    }
+
+    it("should identify an invalid gz") {
+      DynamoDBLocalUtils.validGzip(new File(getClass.getResource("/invalid.tar.gz").getFile)) should be(false)
+    }
   }
 
 }

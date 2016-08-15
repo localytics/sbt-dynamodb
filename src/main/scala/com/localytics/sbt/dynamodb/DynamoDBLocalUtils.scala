@@ -1,6 +1,8 @@
 package com.localytics.sbt.dynamodb
 
-import java.io.File
+import java.io.{File, FileInputStream}
+import java.util.zip.{GZIPInputStream, ZipFile}
+
 import scala.util.Try
 
 object DynamoDBLocalUtils {
@@ -25,4 +27,7 @@ object DynamoDBLocalUtils {
   def killPidCommand(pid: String): String =
     if (osName.toLowerCase.contains("windows")) s"Taskkill /PID $pid /F" else s"kill $pid"
 
+  def validJar(file: File): Boolean = Try(new ZipFile(file)).isSuccess
+
+  def validGzip(file: File): Boolean = Try(new GZIPInputStream(new FileInputStream(file)).read()).isSuccess
 }

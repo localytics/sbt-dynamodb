@@ -13,23 +13,28 @@ object DynamoDBLocalTasks {
   def deployDynamoDBLocalTask = (dynamoDBLocalVersion, dynamoDBLocalDownloadUrl, dynamoDBLocalDownloadDir, dynamoDBLocalDownloadIfOlderThan, streams) map {
     case (ver, url, targetDir, downloadIfOlderThan, streamz) =>
       import sys.process._
-      val outputFile = new File(targetDir, s"dynamodb_local_$ver.tar.gz")
+
+      val targz = new File(targetDir, s"dynamodb_local_$ver.tar.gz")
+      val jar = new File(targetDir, "DynamoDBLocal.jar")
+
+      def isStale(file: File) = ver == "latest" && System.currentTimeMillis - file.lastModified() > downloadIfOlderThan.toMillis
+
       if (!targetDir.exists()) {
         streamz.log.info(s"Creating DynamoDB Local directory $targetDir")
         targetDir.mkdirs()
       }
-      if (!outputFile.exists() || ((ver == "latest") && (System.currentTimeMillis - outputFile.lastModified() > downloadIfOlderThan.toMillis))) {
+      if (!targz.exists() || isStale(targz) || !validGzip(targz)) {
         val remoteFile = url.getOrElse(s"http://dynamodb-local.s3-website-us-west-2.amazonaws.com/dynamodb_local_$ver.tar.gz")
-        streamz.log.info(s"Downloading DynamoDB Local from [$remoteFile] to [${outputFile.getAbsolutePath}]")
-        (new URL(remoteFile) #> outputFile).!!
+        streamz.log.info(s"Downloading targz from [$remoteFile] to [${targz.getAbsolutePath}]")
+        (new URL(remoteFile) #> targz).!!
       }
-      if (outputFile.exists()) {
-        streamz.log.info(s"Extracting file: [${outputFile.getAbsolutePath}]")
-        Process(Seq("tar", "xzf", outputFile.getAbsolutePath), targetDir).!!
-        outputFile
-      } else {
-        sys.error(s"Cannot to find DynamoDB Local jar at [${outputFile.getAbsolutePath}]")
+      if (!validGzip(targz)) sys.error(s"Invalid gzip file at [${targz.getAbsolutePath}]")
+      if (!jar.exists() || !validJar(jar)) {
+        streamz.log.info(s"Extracting jar from [${targz.getAbsolutePath}] to [${jar.getAbsolutePath}]")
+        Process(Seq("tar", "xzf", targz.getAbsolutePath), targetDir).!!
       }
+      if (!validJar(jar)) sys.error(s"Invalid jar file at [${jar.getAbsolutePath}]")
+      jar
   }
 
   def startDynamoDBLocalTask = (deployDynamoDBLocal, dynamoDBLocalDownloadDir, dynamoDBLocalPort, dynamoDBLocalHeapSize,
