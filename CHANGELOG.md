@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.4.2] - 2016-08-15
+- Skip unnecessary untargz
+- Verify gz and jar files during deploy stage
+
 ## [1.4.1] - 2016-05-03
 - Ensure we kill the right DynamoDB process
 
