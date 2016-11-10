@@ -26,9 +26,9 @@ Configuration
 To have DynamoDB Local automatically start and stop around your tests
 
 ```
-startDynamoDBLocal <<= startDynamoDBLocal.dependsOn(compile in Test)
-test in Test <<= (test in Test).dependsOn(startDynamoDBLocal)
-testOptions in Test <+= dynamoDBLocalTestCleanup
+startDynamoDBLocal := startDynamoDBLocal.dependsOn(compile in Test).value
+test in Test := (test in Test).dependsOn(startDynamoDBLocal).value
+testOptions in Test += dynamoDBLocalTestCleanup.value
 ```
 
 To download the DynamoDB Local jar to a specific location ("dynamodb-local" is the default)
