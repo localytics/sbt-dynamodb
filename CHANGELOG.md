@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.4.3] - 2016-11-10
+- Use new syntax to remove warnings in sbt 0.13.13. Thanks @philwills.
+
 ## [1.4.2] - 2016-08-15
 - Skip unnecessary untargz
 - Verify gz and jar files during deploy stage

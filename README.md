@@ -3,14 +3,14 @@ sbt-dynamodb
 
 Support for running [DynamoDB Local](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Tools.html) in tests.
 
-[![MIT license](https://img.shields.io/badge/license-MIT%20License-blue.svg)](LICENSE) 
+[![MIT license](https://img.shields.io/badge/license-MIT%20License-blue.svg)](LICENSE)
 
 Installation
 ------------
 Add the following to your `project/plugins.sbt` file:
 
 ```
-addSbtPlugin("com.localytics" % "sbt-dynamodb" % "1.4.1")
+addSbtPlugin("com.localytics" % "sbt-dynamodb" % "1.4.3")
 ```
 
 sbt 0.13.6+ is supported, 0.13.5 should work with the right bintray resolvers
