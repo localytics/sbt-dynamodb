@@ -1,7 +1,7 @@
 package com.localytics.sbt.dynamodb
 
 import com.localytics.sbt.dynamodb.DynamoDBLocalKeys._
-import com.localytics.sbt.dynamodb.DynamoDBLocalTasks._
+import sbt.Keys._
 import sbt._
 
 import scala.concurrent.duration._
@@ -26,9 +26,34 @@ object DynamoDBLocalPlugin extends AutoPlugin {
     dynamoDBLocalInMemory := true,
     dynamoDBLocalSharedDB := false,
     dynamoDBLocalCleanAfterStop := true,
-    deployDynamoDBLocal <<= deployDynamoDBLocalTask,
-    startDynamoDBLocal <<= startDynamoDBLocalTask,
-    stopDynamoDBLocal <<= stopDynamoDBLocalTask,
-    dynamoDBLocalTestCleanup <<= dynamoDBLocalTestCleanupTask
+    deployDynamoDBLocal := DeployDynamoDBLocal(
+      dynamoDBLocalVersion.value,
+      dynamoDBLocalDownloadUrl.value,
+      dynamoDBLocalDownloadDir.value,
+      dynamoDBLocalDownloadIfOlderThan.value,
+      streams.value),
+    startDynamoDBLocal := StartDynamoDBLocal(
+      dynamoDBLocalDownloadDir.value,
+      dynamoDBLocalPort.value,
+      dynamoDBLocalHeapSize.value,
+      dynamoDBLocalDBPath.value,
+      dynamoDBLocalInMemory.value,
+      dynamoDBLocalSharedDB.value,
+      streams.value),
+    stopDynamoDBLocal := StopDynamoDBLocal(
+      dynamoDBLocalDBPath.value,
+      dynamoDBLocalCleanAfterStop.value,
+      dynamoDBLocalPort.value,
+      dynamoDBLocalDownloadDir.value,
+      streams.value),
+    dynamoDBLocalTestCleanup := Tests.Cleanup(() =>
+      StopDynamoDBLocal(dynamoDBLocalDBPath.value,
+        dynamoDBLocalCleanAfterStop.value,
+        dynamoDBLocalPort.value,
+        dynamoDBLocalDownloadDir.value,
+        streams.value)),
+    startDynamoDBLocal := startDynamoDBLocal
+      .dependsOn(deployDynamoDBLocal)
+      .value
   )
 }
