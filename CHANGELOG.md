@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.5.0] -2016-12-13
+- Refactor to best practices and SBT 1.0 syntax
+
 ## [1.4.3] - 2016-11-10
 - Use new syntax to remove warnings in sbt 0.13.13. Thanks @philwills.
 
