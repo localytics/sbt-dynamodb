@@ -2,7 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.5.0] -2016-12-13
+## [1.5.1] - 2017-01-17
+- Fix #26 - bug in shutdown
+
+## [1.5.0] - 2016-12-13
 - Refactor to best practices and SBT 1.0 syntax
 
 ## [1.4.3] - 2016-11-10
