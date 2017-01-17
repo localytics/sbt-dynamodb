@@ -8,7 +8,8 @@ import sbt._
 object StopDynamoDBLocal {
 
   def apply(dbPathOpt: Option[String], clean: Boolean, port: Int, baseDir: File, streamz: TaskStreams): Unit = {
-    PidUtils.extractPid("jps -ml".!!, port, baseDir) match {
+    val jar = new File(baseDir, "DynamoDBLocal.jar")
+    PidUtils.extractPid("jps -ml".!!, port, jar) match {
       case Some(pid) =>
         streamz.log.info("Stopping dynamodb local")
         PidUtils.killPidCommand(pid).!
