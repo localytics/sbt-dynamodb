@@ -2,7 +2,6 @@ package com.localytics.sbt.dynamodb
 
 import java.net.Socket
 
-import com.localytics.sbt.PidUtils
 import sbt.File
 import sbt.Keys._
 import sbt._

@@ -1,6 +1,5 @@
 package com.localytics.sbt.dynamodb
 
-import com.localytics.sbt.PidUtils
 import sbt.File
 import sbt.Keys._
 import sbt._
