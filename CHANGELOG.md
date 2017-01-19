@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.5.2] - 2017-01-19
+- Fix PidUtil class collision when using multiple localytics/sbt-* projects
+
 ## [1.5.1] - 2017-01-17
 - Fix #26 - bug in shutdown
 
