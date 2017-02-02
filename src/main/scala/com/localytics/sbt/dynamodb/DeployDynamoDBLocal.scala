@@ -29,7 +29,7 @@ object DeployDynamoDBLocal {
       targetDir.mkdirs()
     }
     if (!targz.exists() || isStale(targz) || !validGzip(targz)) {
-      val remoteFile = url.getOrElse(s"https://s3-us-west-2.amazonaws.com/dynamodb-local/dynamodb_local_latest.tar.gz")
+      val remoteFile = url.getOrElse(s"https://s3-us-west-2.amazonaws.com/dynamodb-local/dynamodb_local_$ver.tar.gz")
       streamz.log.info(s"Downloading targz from [$remoteFile] to [${targz.getAbsolutePath}]")
       (new URL(remoteFile) #> targz).!!
     }
