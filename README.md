@@ -28,6 +28,7 @@ To have DynamoDB Local automatically start and stop around your tests
 ```
 startDynamoDBLocal := startDynamoDBLocal.dependsOn(compile in Test).value
 test in Test := (test in Test).dependsOn(startDynamoDBLocal).value
+testOnly in Test := (testOnly in Test).dependsOn(startDynamoDBLocal).value
 testOptions in Test += dynamoDBLocalTestCleanup.value
 ```
 
@@ -107,6 +108,7 @@ Similarly, you can have the plugin automatically start and stop around your test
 ```
 startDynamoDBLocal in Test := (startDynamoDBLocal in Test).dependsOn(compile in Test).value
 test in Test := (test in Test).dependsOn(startDynamoDBLocal in Test).value
+testOnly in Test := (testOnly in Test).dependsOn(startDynamoDBLocal in Test).value
 testOptions in Test += (dynamoDBLocalTestCleanup in Test).value
 ```
 
