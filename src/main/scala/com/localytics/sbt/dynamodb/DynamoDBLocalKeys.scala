@@ -2,6 +2,7 @@ package com.localytics.sbt.dynamodb
 
 import java.io.File
 
+import sbt.Keys._
 import sbt._
 
 import scala.concurrent.duration._
@@ -22,4 +23,47 @@ object DynamoDBLocalKeys {
   lazy val startDynamoDBLocal = TaskKey[String]("start-dynamodb-local")
   lazy val stopDynamoDBLocal = TaskKey[Unit]("stop-dynamodb-local")
   lazy val dynamoDBLocalTestCleanup = TaskKey[Tests.Cleanup]("dynamodb-local-test-cleanup")
+
+  // http://www.scala-sbt.org/0.13/docs/Plugins-Best-Practices.html#Provide+raw+settings+and+configured+settings
+  lazy val baseDynamoDBSettings = Seq(
+    dynamoDBLocalVersion := "latest",
+    dynamoDBLocalDownloadUrl := None,
+    dynamoDBLocalDownloadDir := file("dynamodb-local"),
+    dynamoDBLocalDownloadIfOlderThan := 2.days,
+    dynamoDBLocalPort := 8000,
+    dynamoDBLocalDBPath := None,
+    dynamoDBLocalHeapSize := None,
+    dynamoDBLocalInMemory := true,
+    dynamoDBLocalSharedDB := false,
+    dynamoDBLocalCleanAfterStop := true,
+    deployDynamoDBLocal := DeployDynamoDBLocal(
+      dynamoDBLocalVersion.value,
+      dynamoDBLocalDownloadUrl.value,
+      dynamoDBLocalDownloadDir.value,
+      dynamoDBLocalDownloadIfOlderThan.value,
+      streams.value),
+    startDynamoDBLocal := StartDynamoDBLocal(
+      dynamoDBLocalDownloadDir.value,
+      dynamoDBLocalPort.value,
+      dynamoDBLocalHeapSize.value,
+      dynamoDBLocalDBPath.value,
+      dynamoDBLocalInMemory.value,
+      dynamoDBLocalSharedDB.value,
+      streams.value),
+    stopDynamoDBLocal := StopDynamoDBLocal(
+      dynamoDBLocalDBPath.value,
+      dynamoDBLocalCleanAfterStop.value,
+      dynamoDBLocalPort.value,
+      dynamoDBLocalDownloadDir.value,
+      streams.value),
+    dynamoDBLocalTestCleanup := Tests.Cleanup(() =>
+      StopDynamoDBLocal(dynamoDBLocalDBPath.value,
+        dynamoDBLocalCleanAfterStop.value,
+        dynamoDBLocalPort.value,
+        dynamoDBLocalDownloadDir.value,
+        streams.value)),
+    startDynamoDBLocal := startDynamoDBLocal
+      .dependsOn(deployDynamoDBLocal)
+      .value
+  )
 }
