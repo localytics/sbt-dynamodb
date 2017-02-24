@@ -10,7 +10,7 @@ Installation
 Add the following to your `project/plugins.sbt` file:
 
 ```
-addSbtPlugin("com.localytics" % "sbt-dynamodb" % "1.5.3")
+addSbtPlugin("com.localytics" % "sbt-dynamodb" % "1.5.4")
 ```
 
 sbt 0.13.6+ is supported, 0.13.5 should work with the right bintray resolvers
@@ -28,6 +28,7 @@ To have DynamoDB Local automatically start and stop around your tests
 ```
 startDynamoDBLocal := startDynamoDBLocal.dependsOn(compile in Test).value
 test in Test := (test in Test).dependsOn(startDynamoDBLocal).value
+testOnly in Test := (testOnly in Test).dependsOn(startDynamoDBLocal).value
 testOptions in Test += dynamoDBLocalTestCleanup.value
 ```
 
@@ -79,6 +80,36 @@ The default on stop is to cleanup any data directory if specified. This can be c
 
 ```
 dynamoDBLocalCleanAfterStop := false
+```
+
+Scopes
+------
+
+By default this plugin lives entirely in the `Global` scope. However, different settings for different scopes is possible. For instance, you can add the plugin to the `Test` scope using
+
+```
+inConfig(Test)(baseDynamoDBSettings)
+```
+
+You can then adjust the settings within the `Test` scope using
+
+```
+(dynamoDBLocalDownloadDir in Test) := file("in-test/dynamo-db")
+```
+
+and you can execute the plugin tasks within the `Test` scope using
+
+```
+sbt test:start-dynamodb-local
+```
+
+Similarly, you can have the plugin automatically start and stop around your tests using
+
+```
+startDynamoDBLocal in Test := (startDynamoDBLocal in Test).dependsOn(compile in Test).value
+test in Test := (test in Test).dependsOn(startDynamoDBLocal in Test).value
+testOnly in Test := (testOnly in Test).dependsOn(startDynamoDBLocal in Test).value
+testOptions in Test += (dynamoDBLocalTestCleanup in Test).value
 ```
 
 Thanks
