@@ -36,7 +36,7 @@ object DeployDynamoDBLocal {
     if (!validGzip(targz)) sys.error(s"Invalid gzip file at [${targz.getAbsolutePath}]")
     if (!jar.exists() || !validJar(jar)) {
       streamz.log.info(s"Extracting jar from [${targz.getAbsolutePath}] to [${jar.getAbsolutePath}]")
-      Process(Seq("tar", "--force-local", "-xzf", targz.getAbsolutePath), targetDir).!!
+      Process(Seq("tar", "xzf", targz.getName), targetDir).!!
     }
     if (!validJar(jar)) sys.error(s"Invalid jar file at [${jar.getAbsolutePath}]")
     jar
