@@ -1,11 +1,12 @@
 package com.localytics.sbt.dynamodb
 
 import java.io.File
+import java.util.regex.Pattern
 
 object PidUtils {
 
   def extractPid(input: String, port: Int, jar: File): Option[String] = {
-    val pidPortRegex = s"\\d+ ${jar.getAbsolutePath} -port $port".r
+    val pidPortRegex = s"\\d+ ${Pattern.quote(jar.getAbsolutePath)} -port $port".r
     pidPortRegex.findFirstIn(input).map(_.split(" ")(0))
   }
 
