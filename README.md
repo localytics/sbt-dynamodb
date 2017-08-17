@@ -1,7 +1,7 @@
 sbt-dynamodb
 ===============
 
-Support for running [DynamoDB Local](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Tools.html) in tests.
+Support for running [DynamoDB Local](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.html) in tests.
 
 [![MIT license](https://img.shields.io/badge/license-MIT%20License-blue.svg)](LICENSE)
 
