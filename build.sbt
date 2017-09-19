@@ -4,6 +4,8 @@ description := "Support for running DynamoDB Local in your integration tests"
 
 organization := "com.localytics"
 
+scalaVersion := "2.12.3"
+
 // Sane set of compiler flags
 scalacOptions ++= Seq(
   "-deprecation",         // Emit warning and location for usages of deprecated APIs
@@ -17,11 +19,11 @@ scalacOptions ++= Seq(
 )
 
 // This is an auto plugin
-// http://www.scala-sbt.org/0.13/docs/Plugins.html#Creating+an+auto+plugin
+// http://www.scala-sbt.org/1.x/docs/Plugins.html#Creating+an+auto+plugin
 sbtPlugin := true
 
 // Generate a POM
-// http://www.scala-sbt.org/0.13/docs/Publishing.html#Modifying+the+generated+POM
+// http://www.scala-sbt.org/1.x/docs/Publishing.html#Modifying+the+generated+POM
 publishMavenStyle := false
 
 // MIT License for bintray
@@ -37,11 +39,16 @@ bintrayOrganization := Some("localytics")
 bintrayPackageLabels := Seq("localytics", "sbt", "aws", "dynamodb", "test", "testing")
 
 // Error on conflicting dependencies
-// http://www.scala-sbt.org/0.13/docs/Library-Management.html#Conflict+Management
+// http://www.scala-sbt.org/1.x/docs/Library-Management.html#Conflict+Management
 conflictManager := ConflictManager.strict
 
 // Error on circular dependencies
-// http://www.scala-sbt.org/0.13/docs/sbt-0.13-Tech-Previews.html#Circular+dependency
+// http://www.scala-sbt.org/1.x/docs/sbt-0.13-Tech-Previews.html#Circular+dependency
 updateOptions := updateOptions.value.withCircularDependencyLevel(CircularDependencyLevel.Error)
 
-libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.6" % "test"
+libraryDependencies +=
+  ( "org.scalatest" %% "scalatest" % "3.0.1" % "test"
+    // Scalatest 3.0.1 is slightly behind sbt and Scala dependencies for these two modules, so they must be excluded
+    // while Strict dependency checking is enabled.
+    exclude("org.scala-lang.modules", s"scala-xml_${scalaBinaryVersion.value}")
+    exclude("org.scala-lang.modules", s"scala-parser-combinators_${scalaBinaryVersion.value}") )

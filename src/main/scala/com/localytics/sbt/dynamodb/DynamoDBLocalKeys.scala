@@ -56,12 +56,20 @@ object DynamoDBLocalKeys {
       dynamoDBLocalPort.value,
       dynamoDBLocalDownloadDir.value,
       streams.value),
-    dynamoDBLocalTestCleanup := Tests.Cleanup(() =>
-      StopDynamoDBLocal(dynamoDBLocalDBPath.value,
-        dynamoDBLocalCleanAfterStop.value,
-        dynamoDBLocalPort.value,
-        dynamoDBLocalDownloadDir.value,
-        streams.value)),
+    dynamoDBLocalTestCleanup := {
+      val dynamoDBLocalDBPathValue = dynamoDBLocalDBPath.value
+      val dynamoDBLocalCleanAfterStopValue = dynamoDBLocalCleanAfterStop.value
+      val dynamoDBLocalPortValue = dynamoDBLocalPort.value
+      val dynamoDBLocalDownloadDirValue = dynamoDBLocalDownloadDir.value
+      val streamsValue = streams.value
+      Tests.Cleanup(() =>
+        StopDynamoDBLocal(
+          dynamoDBLocalDBPathValue,
+          dynamoDBLocalCleanAfterStopValue,
+          dynamoDBLocalPortValue,
+          dynamoDBLocalDownloadDirValue,
+          streamsValue))
+    },
     startDynamoDBLocal := startDynamoDBLocal
       .dependsOn(deployDynamoDBLocal)
       .value

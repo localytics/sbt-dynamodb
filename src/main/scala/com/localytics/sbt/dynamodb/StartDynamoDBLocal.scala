@@ -4,8 +4,8 @@ import java.net.Socket
 
 import sbt.File
 import sbt.Keys._
-import sbt._
 
+import scala.sys.process._
 import scala.util.Try
 
 object StartDynamoDBLocal {

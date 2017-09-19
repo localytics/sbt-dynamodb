@@ -2,7 +2,8 @@ package com.localytics.sbt.dynamodb
 
 import sbt.File
 import sbt.Keys._
-import sbt._
+
+import scala.sys.process._
 
 object StopDynamoDBLocal {
 
