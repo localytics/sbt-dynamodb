@@ -9,6 +9,13 @@ Installation
 ------------
 Add the following to your `project/plugins.sbt` file:
 
+For sbt 1.0:
+```
+addSbtPlugin("com.localytics" % "sbt-dynamodb" % "2.0.0")
+```
+
+For sbt 0.13.5+
+
 ```
 addSbtPlugin("com.localytics" % "sbt-dynamodb" % "1.5.5")
 ```

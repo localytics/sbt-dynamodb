@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.0.0] - 2017-09-19
+- Upgrade to SBT 1.0/Scala 2.12
+- Thanks to [Jeff Wilde](https://github.com/jeffwilde) for the PR!
+
 ## [1.5.5] - 2017-03-08
 - Fix Windows bugs caused by Windows paths
 
