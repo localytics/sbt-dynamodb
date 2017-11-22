@@ -4,6 +4,7 @@ sbt-dynamodb
 Support for running [DynamoDB Local](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.html) in tests.
 
 [![MIT license](https://img.shields.io/badge/license-MIT%20License-blue.svg)](LICENSE)
+[ ![Download](https://api.bintray.com/packages/localytics/sbt-plugins/sbt-dynamodb/images/download.svg) ](https://bintray.com/localytics/sbt-plugins/sbt-dynamodb/_latestVersion)
 
 Installation
 ------------
