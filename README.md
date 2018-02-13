@@ -71,7 +71,7 @@ To override the default JVM heap size (specified in MB)
 dynamoDBLocalHeapSize := Some(1024)
 ```
 
-The default for the DynamoDB Local instance is to run in "in-memory" mode. To use a persistent file based mode you need to set both the data path & turn off in-memory.
+The default for the DynamoDB Local instance is to run in "in-memory" mode. To use a persistent file based mode you need to set both the data path & turn off in-memory. The plugin will fail to overwrite an existing db file at this path.
 
 ```
 dynamoDBLocalInMemory := false
@@ -88,6 +88,28 @@ The default on stop is to cleanup any data directory if specified. This can be c
 
 ```
 dynamoDBLocalCleanAfterStop := false
+```
+
+Debugging db Contents
+------
+
+Configure your app to persist to disk:
+
+```
+dynamoDBLocalInMemory := false
+dynamoDBLocalDBPath := Some("some/directory/here")
+```
+
+Once you have completed some operation involving dynamo, you can inspect the contents with sqlite3. Example:
+
+```
+$ sqlite3 /tmp/dynamo/test/AXAVAXAJUNK_us-east-1.db "select ObjectJSON from \"table\"" |  jq '.device_id,.env'
+{
+  "N":"123456789"
+},
+{
+  "S":"Production"
+}
 ```
 
 Scopes
@@ -125,4 +147,4 @@ Thanks
 
 This work is based on the [Maven Plugin for DynamoDB](https://github.com/jcabi/jcabi-dynamodb-maven-plugin).
 
-The [initial implementation](https://github.com/grahamar/sbt-dynamodb) was developed by [Graham Rhodes](https://github.com/grahamar). 
+The [initial implementation](https://github.com/grahamar/sbt-dynamodb) was developed by [Graham Rhodes](https://github.com/grahamar).
