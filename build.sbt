@@ -47,8 +47,8 @@ conflictManager := ConflictManager.strict
 updateOptions := updateOptions.value.withCircularDependencyLevel(CircularDependencyLevel.Error)
 
 libraryDependencies +=
-  ( "org.scalatest" %% "scalatest" % "3.0.1" % "test"
-    // Scalatest 3.0.1 is slightly behind sbt and Scala dependencies for these two modules, so they must be excluded
+  ( "org.scalatest" %% "scalatest" % "3.0.5" % "test"
+    // Scalatest 3.0.5 is slightly behind sbt and Scala dependencies for these two modules, so they must be excluded
     // while Strict dependency checking is enabled.
     exclude("org.scala-lang.modules", s"scala-xml_${scalaBinaryVersion.value}")
     exclude("org.scala-lang.modules", s"scala-parser-combinators_${scalaBinaryVersion.value}") )
