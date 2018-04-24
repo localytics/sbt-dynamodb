@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.0.2] - 2018-04-24
+- Upgrade Scalatest from 3.0.1 to 3.0.5
+- Upgrade sbt from 1.0.0 to 1.1.4
+- Upgrade sbt-release from 1.0.6 to 1.0.8
+- Thanks to [sullis](https://github.com/sullis) for the PRs!
+
 ## [2.0.1] - 2017-11-22
 - Fix TestOnly instruction in README
 

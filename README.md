@@ -12,7 +12,7 @@ Add the following to your `project/plugins.sbt` file:
 
 For sbt 1.0:
 ```
-addSbtPlugin("com.localytics" % "sbt-dynamodb" % "2.0.0")
+addSbtPlugin("com.localytics" % "sbt-dynamodb" % "2.0.2")
 ```
 
 For sbt 0.13.5+
