@@ -4,7 +4,7 @@ description := "Support for running DynamoDB Local in your integration tests"
 
 organization := "com.localytics"
 
-scalaVersion := "2.12.3"
+scalaVersion := "2.12.6"
 
 // Sane set of compiler flags
 scalacOptions ++= Seq(
