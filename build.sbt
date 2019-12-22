@@ -4,7 +4,7 @@ description := "Support for running DynamoDB Local in your integration tests"
 
 organization := "com.localytics"
 
-scalaVersion := "2.12.3"
+scalaVersion := "2.12.10"
 
 // Sane set of compiler flags
 scalacOptions ++= Seq(
@@ -46,9 +46,6 @@ conflictManager := ConflictManager.strict
 // http://www.scala-sbt.org/1.x/docs/sbt-0.13-Tech-Previews.html#Circular+dependency
 updateOptions := updateOptions.value.withCircularDependencyLevel(CircularDependencyLevel.Error)
 
-libraryDependencies +=
-  ( "org.scalatest" %% "scalatest" % "3.0.5" % "test"
-    // Scalatest 3.0.5 is slightly behind sbt and Scala dependencies for these two modules, so they must be excluded
-    // while Strict dependency checking is enabled.
-    exclude("org.scala-lang.modules", s"scala-xml_${scalaBinaryVersion.value}")
-    exclude("org.scala-lang.modules", s"scala-parser-combinators_${scalaBinaryVersion.value}") )
+libraryDependencies += (
+  "org.scalatest" %% "scalatest" % "3.1.0" % "test"
+)
